@@ -59,12 +59,13 @@ LinkedIn zwraca automatycznemu klientowi HTTP 999. Zachowany dokładny URL,
 otwarcie nowej karty i bezpieczny brak `window.opener` są sprawdzone.
 Nie testowano fizycznych telefonów, Safari, Firefoksa ani czytnika ekranu.
 
-## Dostarczenie bez publikacji
+## Publikacja
 
-GitHub Pages było już aktywne z `main` / `/`. Z tego powodu commit i push
-wykonywane są do **feat/issue-1-brand-rebuild**, bez merge do `main`.
-Nie zmieniono Pages, widoczności repo ani blokady indeksowania.
-Ewentualna publikacja i rozwiązanie warunków fontu to osobny zakres.
+Przebudowa jest już na GitHub Pages pod
+<https://ponurson.github.io/Katarzyna_chalas_page/>. Wykonano to osobnym zadaniem:
+`feat/issue-1-brand-rebuild` scalono do `main` (fast-forward), a Pages buduje
+z `main` / `/`. Konfiguracji Pages, widoczności repo ani `noindex,nofollow`
+nie zmieniono. Warunki fontu pozostają osobnym zakresem.
 
 Przed zakończeniem porównywane są lokalny HEAD i ref tej gałęzi na origin.
 Commit można odczytać przez `git log -1 --oneline`; bieżący stan przez

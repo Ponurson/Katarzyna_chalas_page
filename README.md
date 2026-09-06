@@ -105,7 +105,12 @@ Pochodzenie, warunki i ograniczenie polskich glifów w Allrounder Test opisano w
 w istniejącej karcie `next_steps` **1879**, projekt 1753. Cena MTQ Plus oraz
 placeholdery tekstowe pozostają zgodne z decyzjami właściciela.
 
-GitHub Pages jest już skonfigurowany dla `main` / `/`. Praca z issue #1 jest
-commitowana i wysyłana na `feat/issue-1-brand-rebuild`, żeby push nie opublikował
-przebudowy. Merge do `main` może uruchomić publikację i wymaga osobnego zadania.
-Nie zmieniono konfiguracji Pages, widoczności repo ani `noindex,nofollow`.
+Przebudowa jest opublikowana na GitHub Pages:
+<https://ponurson.github.io/Katarzyna_chalas_page/>. Pages buduje z gałęzi `main`
+i katalogu `/`, więc publikuje każdy push do `main`; nie ma workflow ani kroku
+budowania. Adresy w `index.html` i podstronach są względne i działają pod
+podkatalogiem `/Katarzyna_chalas_page/`. `404.html` jest serwowana przez Pages dla
+złych adresów i jako jedyna używa adresów bezwzględnych z tym prefiksem.
+
+Wszystkie strony nadal mają `noindex,nofollow`, więc wyszukiwarki nie indeksują
+demo. Zdjęcie zgody na indeksowanie i własna domena to decyzje właścicielki.
