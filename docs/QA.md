@@ -1,5 +1,9 @@
 # Kontrola demo — 2026-09-06
 
+To raport pierwotnej przebudowy. Późniejsze poprawki wyglądu, nowe proporcje
+tekstu względem zdjęć i ponowna weryfikacja są opisane w
+[raporcie zmian po review](review-2026-09-06.md).
+
 Kontrola dotyczy dziewięciu plików HTML w gałęzi `feat/issue-1-brand-rebuild`.
 Środowisko: Raspberry Pi, Chromium **149.0.7827.196**, Playwright **1.58.2**,
 axe-core **4.11.1**, Python 3.11, openpyxl 3.0.9, PyMuPDF 1.28.2.

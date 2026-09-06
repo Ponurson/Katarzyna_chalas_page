@@ -1,5 +1,11 @@
 # Handoff — issue #1
 
+Aktualizacja po review: monogram KC, ciemny nagłówek, wyrównane kolumny tekstu
+i zdjęć, przywrócone tła i kafelki, Montserrat Bold w Dla biznesu, baner oraz
+cennik. Szczegóły i pomiary laptopów/telefonów:
+[raport zmian po review](docs/review-2026-09-06.md).
+Poniżej zapis pierwotnego wdrożenia i późniejszej konfiguracji publikacji.
+
 Demo Katarzyny Chałas przebudowano: strona główna i osiem podstron, nowa paleta,
 lokalne Allrounder/Montserrat, nowe zdjęcia oraz pełne teksty z Excela i briefu.
 Praca jest w gałęzi `feat/issue-1-brand-rebuild`; źródłowy `main` to `e92207f`.

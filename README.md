@@ -4,7 +4,8 @@ Statyczny HTML/CSS/JavaScript: strona główna i osiem pełnych podstron zgodnie
 [issue #1](https://github.com/Ponurson/Katarzyna_chalas_page/issues/1).
 Nie wymaga frameworka, kompilacji ani backendu. Każda strona ma
 `noindex,nofollow`. Zakres wdrożenia i wyniki: [HANDOFF.md](HANDOFF.md),
-[raport QA](docs/QA.md), [mapowanie źródeł](docs/source-mapping.md).
+[poprawki po review i aktualne QA](docs/review-2026-09-06.md),
+[QA pierwotnej przebudowy](docs/QA.md), [mapowanie źródeł](docs/source-mapping.md).
 
 ## Podgląd lokalny
 

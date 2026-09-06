@@ -104,6 +104,7 @@ async function layout(page) {
       Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 1));
     return { documentWidth: document.documentElement.scrollWidth, viewport: innerWidth,
       images, overlaps, about: box('.about-portrait img'), aboutText: box('.about-copy'),
+      hero: box('.hero:not(.page-hero) .hero-media img'), heroText: box('.hero:not(.page-hero) .hero-copy'),
       contact: box('.contact-image img'), contactBlock: box('.contact-image'),
       h1Font: getComputedStyle(document.querySelector('h1')).fontFamily,
       bodyFont: getComputedStyle(document.body).fontFamily,
@@ -150,8 +151,13 @@ async function layout(page) {
           const image = geometry.images.find(image => image.src.startsWith('about-'));
           const paintedHeight = Math.min(image.height, image.width * image.naturalHeight / image.naturalWidth);
           const ratio = paintedHeight / geometry.aboutText.height;
-          assert(ratio >= .7 && ratio <= 1.01, `O mnie: wysokość zdjęcia / tekstu ${ratio}`);
+          assert(ratio >= .98 && ratio <= 1.02, `O mnie: wysokość zdjęcia / tekstu ${ratio}`);
           geometry.aboutHeightRatio = ratio;
+        }
+        if (geometry.hero && width >= 1024) {
+          const ratio = geometry.hero.height / geometry.heroText.height;
+          assert(ratio >= .98 && ratio <= 1.02, `Hero: wysokość zdjęcia / tekstu ${ratio}`);
+          geometry.heroHeightRatio = ratio;
         }
         const result = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
         const violations = result.violations.map(item => ({ id: item.id, impact: item.impact, targets: item.nodes.map(node => node.target) }));

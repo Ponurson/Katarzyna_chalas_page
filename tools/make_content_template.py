@@ -32,7 +32,7 @@ def normal(text):
     return ' '.join(text.replace('\xa0', ' ').split())
 
 
-@dataclass
+@dataclass(eq=False)  # parent/children cycle: compare nodes by identity
 class Node:
     tag: str
     attrs: dict = field(default_factory=dict)
