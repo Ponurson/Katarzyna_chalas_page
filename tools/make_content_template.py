@@ -1,209 +1,292 @@
 #!/usr/bin/env python3
-"""Buduje wzorzec Excela z tekstami strony (index.html) do wypelnienia przez klienta.
+"""Export editable content of the nine static pages; never import or modify HTML.
 
-Uzycie:  python3 tools/make_content_template.py [--check]
-Wynik:   teksty-strony.xlsx  (arkusze: Instrukcja, Teksty)
-
-ponytail: tekst wyciagany prosto z index.html przez html.parser - zero zaleznosci
-poza openpyxl; jesli strona urosnie o kolejne podstrony, dodaj petle po plikach.
+python3 tools/make_content_template.py [--check] [--output PATH]
+Dependencies: openpyxl. Full instructions: README.md.
 """
-import sys
+import argparse
+from dataclasses import dataclass, field
 from html.parser import HTMLParser
 from pathlib import Path
+import re
 
-from openpyxl import Workbook
-from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
+from openpyxl import Workbook, load_workbook
+from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.utils import get_column_letter
 
 ROOT = Path(__file__).resolve().parent.parent
-SRC = ROOT / "index.html"
-OUT = ROOT / "teksty-strony.xlsx"
-
-SKIP_TAGS = {"svg", "script", "style"}
-VOID = {"br", "img", "meta", "link", "input", "hr", "source"}
-
-SECTIONS = {
-    "top": "Hero (pierwszy ekran)",
-    "omnie": "O mnie",
-    "oferta": "Oferta",
-    "narzedzia": "Narzędzia (MTQ / PRISM)",
-    "biznes": "Dla biznesu",
-    "kontakt": "Kontakt",
-    "journey": "Moja droga / Twoja droga",
-    "benefits": "Korzyści ze współpracy",
-    "site-header": "Menu (góra strony)",
-    "site-footer": "Stopka",
-}
-
-ELEMENTS = {
-    "h1": "Nagłówek główny (H1)",
-    "h2": "Nagłówek sekcji (H2)",
-    "h3": "Nagłówek karty (H3)",
-    "blockquote": "Cytat",
-    "li": "Punkt listy",
-    "strong": "Wyróżnienie / nazwa",
-    "small": "Podpis pod nazwą",
-    "span": "Krótki podpis",
-    "p": "Akapit",
-    "a": "Link",
-}
+PAGES = (
+    'index.html', 'moja-droga.html', 'twoja-droga.html', 'coaching.html',
+    'interwencja-kryzysowa.html', 'prism-brain-mapping.html', 'mtq-plus.html',
+    'terapia-dzwiekiem.html', 'warsztaty-i-szkolenia.html',
+)
+OUT = ROOT / 'teksty-strony.xlsx'
+VOID = {'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'}
+SKIP = {'svg', 'script', 'style', 'template'}
+OWNERS = {'title', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'dt', 'dd', 'figcaption', 'button', 'cite', 'a', 'span', 'small', 'strong', 'em', 'blockquote', 'address'}
+BLOCKS = {'p', 'ul', 'ol', 'dl', 'div', 'section', 'article', 'blockquote'}
+LABELS = {'title': 'Tytuł strony', 'p': 'Akapit', 'h1': 'Nagłówek H1', 'h2': 'Nagłówek H2', 'h3': 'Nagłówek H3', 'li': 'Punkt listy', 'dt': 'Usługa / termin', 'dd': 'Cena / opis', 'cite': 'Autor cytatu', 'figcaption': 'Podpis ilustracji', 'a': 'Etykieta linku', 'button': 'Etykieta przycisku', 'span': 'Etykieta', 'strong': 'Wyróżnienie / nazwa', 'small': 'Podpis'}
 
 
-def label(tag, cls):
-    if tag == "a":
-        return "Przycisk" if "button" in cls else "Link tekstowy"
-    if tag == "span" and "eyebrow" in cls:
-        return "Nadtytuł (małe litery nad nagłówkiem)"
-    if tag == "p" and "hero-lead" in cls:
-        return "Zdanie wprowadzające"
-    if tag == "p" and "competence-line" in cls:
-        return "Linia kompetencji (oddzielona |)"
-    if tag == "p" and "tool-kicker" in cls:
-        return "Opis narzędzia"
-    return ELEMENTS.get(tag, tag)
+def normal(text):
+    return ' '.join(text.replace('\xa0', ' ').split())
 
 
-class Extract(HTMLParser):
-    def __init__(self):
-        super().__init__(convert_charrefs=True)
-        self.stack = []          # [(tag, attrs)]
-        self.skip = 0            # glebokosc wewnatrz svg/script/aria-hidden
-        self.rows = []           # (sekcja, element, tekst, kontekst)
+@dataclass
+class Node:
+    tag: str
+    attrs: dict = field(default_factory=dict)
+    parent: object = None
+    children: list = field(default_factory=list)
 
-    # --- pomocnicze -------------------------------------------------
+    def ancestors(self):
+        node = self.parent
+        while node:
+            yield node
+            node = node.parent
+
+    def hidden(self):
+        return any(n.tag in SKIP or n.attrs.get('aria-hidden') == 'true' or 'hidden' in n.attrs for n in [self, *self.ancestors()])
+
+    def text(self, own=False):
+        return normal(self.raw_text(own))
+
+    def raw_text(self, own=False):
+        chunks = []
+        for child in self.children:
+            if isinstance(child, str):
+                chunks.append(child)
+            elif not child.hidden():
+                if own and child.tag in BLOCKS:
+                    continue
+                chunks.append(' ' if child.tag == 'br' else child.raw_text(own))
+                if child.tag in BLOCKS or child.tag == 'li':
+                    chunks.append(' ')
+        return ''.join(chunks)
+
+    def walk(self):
+        for child in self.children:
+            if isinstance(child, Node):
+                yield child
+                yield from child.walk()
+
+    def selector(self):
+        if self.attrs.get('data-content-id'):
+            return f'{self.tag}[data-content-id="{self.attrs["data-content-id"]}"]'
+        if self.attrs.get('id'):
+            return f'{self.tag}[id="{self.attrs["id"]}"]'
+        siblings = [n for n in self.parent.children if isinstance(n, Node) and n.tag == self.tag]
+        part = f'{self.tag}:nth-of-type({siblings.index(self) + 1})'
+        return (self.parent.selector() + ' > ' if self.parent.tag != 'document' else '') + part
+
     def section(self):
-        for tag, a in reversed(self.stack):
-            key = a.get("id") or (a.get("class", "").split() or [""])[0]
-            if key in SECTIONS:
-                return SECTIONS[key]
-        return "SEO i ustawienia ogólne"
+        for n in [self, *self.ancestors()]:
+            if n.attrs.get('data-section'):
+                return n.attrs['data-section']
+            if n.tag == 'header':
+                return 'Menu'
+            if n.tag == 'footer':
+                return 'Stopka'
+        return 'Ustawienia strony'
 
-    def context(self):
-        parts = []
-        for tag, a in self.stack[-3:]:
-            cls = a.get("class", "").split()
-            parts.append(tag + ("." + cls[0] if cls else ""))
-        return " > ".join(parts)
 
-    def add(self, element, text, context=None):
-        text = " ".join(text.replace("\xa0", " ").split())
-        if text:
-            self.rows.append((self.section(), element, text, context or self.context()))
+class Document(HTMLParser):
+    def __init__(self, text):
+        super().__init__(convert_charrefs=True)
+        self.root = Node('document')
+        self.current = self.root
+        self.feed(text)
+        self.close()
 
-    # --- parser -----------------------------------------------------
     def handle_starttag(self, tag, attrs):
-        a = dict(attrs)
-        if self.skip or tag in SKIP_TAGS or a.get("aria-hidden") == "true":
-            self.skip += 1
-        elif tag == "img" and a.get("alt"):
-            self.add("Opis obrazka (alt — dla wyszukiwarek i czytników ekranu)", a["alt"], a.get("src", ""))
-        elif tag == "a" and a.get("href", "").startswith(("http", "mailto:", "tel:")):
-            self.add("Adres linku (dokąd prowadzi)", a["href"], self.context())
-        elif tag == "meta" and a.get("name") == "description":
-            self.add("Opis strony w Google (max ~155 znaków)", a["content"], "meta description")
+        node = Node(tag, dict(attrs), self.current)
+        self.current.children.append(node)
         if tag not in VOID:
-            self.stack.append((tag, a))
+            self.current = node
 
-    def handle_startendtag(self, tag, attrs):   # np. <path/> w <svg>
+    def handle_startendtag(self, tag, attrs):
         self.handle_starttag(tag, attrs)
-        self.handle_endtag(tag)
+        if tag not in VOID:
+            self.handle_endtag(tag)
 
     def handle_endtag(self, tag):
-        if self.skip:
-            self.skip -= 1
-        if self.stack and tag not in VOID:
-            self.stack.pop()
+        for node in [self.current, *self.current.ancestors()]:
+            if node.tag == tag:
+                self.current = node.parent
+                return
 
     def handle_data(self, data):
-        if self.skip or not self.stack or not data.strip():
-            return
-        tag, a = self.stack[-1]
-        if tag in ("head", "body", "html"):
-            return
-        cls = a.get("class", "")
-        if tag == "title":
-            self.add("Tytuł strony w karcie przeglądarki i Google", data, "<title>")
+        self.current.children.append(data)
+
+    @property
+    def nodes(self):
+        return list(self.root.walk())
+
+
+@dataclass
+class Row:
+    id: str
+    page: str
+    section: str
+    kind: str
+    text: str
+    context: str
+    attribute: str
+
+    def values(self):
+        return [self.id, self.page, self.section, self.kind, self.text, '', '', self.context, self.attribute]
+
+
+def extract(page, text):
+    doc = Document(text)
+    result = []
+    for node in doc.nodes:
+        if node.hidden():
+            continue
+        key = node.attrs.get('data-content-id') or node.attrs.get('id') or node.selector()
+        def add(kind, value, attribute):
+            value = normal(value or '')
+            if value or attribute == 'alt':
+                context = node.selector()
+                if node.tag == 'a':
+                    context += ' | ' + node.text() + ' → ' + node.attrs.get('href', '')
+                if node.tag == 'img':
+                    context += ' | ' + node.attrs.get('src', '')
+                result.append(Row(f'{Path(page).stem}:{key}:{attribute}', page, node.section(), kind, value, context, attribute))
+        if node.tag == 'meta' and node.attrs.get('name') == 'description':
+            add('Opis strony (meta description)', node.attrs.get('content'), 'content')
+        if node.tag == 'img':
+            add('Opis obrazu (alt)', node.attrs.get('alt'), 'alt')
+        if node.tag == 'a' and 'href' in node.attrs:
+            add('Adres linku', node.attrs['href'], 'href')
+        for attr in ('aria-label', 'title'):
+            if attr in node.attrs:
+                add('Etykieta dostępności' if attr == 'aria-label' else 'Podpowiedź', node.attrs[attr], attr)
+        if node.tag not in OWNERS:
+            continue
+        # A paragraph owns its inline emphasis/link label. The link href is still
+        # exported above. Nested lists own their items; no duplicated paragraphs.
+        if any(a.tag in OWNERS and a.tag not in {'li', 'blockquote', 'address'} for a in node.ancestors()):
+            continue
+        if node.tag in {'li', 'blockquote', 'address'}:
+            content = node.text(own=True)
         else:
-            self.add(label(tag, cls), data)
+            content = node.text()
+        if content:
+            add(LABELS.get(node.tag, node.tag), content, 'text')
+    return result
 
 
-def build(rows):
+def extract_site():
+    return [row for page in PAGES for row in extract(page, (ROOT / page).read_text(encoding='utf-8'))]
+
+
+def build(rows, output=OUT):
+    if output.exists():
+        old = load_workbook(output, read_only=True, data_only=False)
+        filled = 'Teksty' in old and any(r[5] or r[6] for r in old['Teksty'].iter_rows(min_row=2, values_only=True) if len(r) >= 7)
+        old.close()
+        if filled:
+            raise ValueError('Plik ma wypełnione kolumny F/G. Zachowaj go i użyj --output z nową nazwą.')
     wb = Workbook()
-
     info = wb.active
-    info.title = "Instrukcja"
-    info.column_dimensions["A"].width = 110
-    for i, line in enumerate([
-        "WZORZEC TEKSTÓW — strona Katarzyna Chałas",
-        "",
-        "1. Wypełnij TYLKO kolumnę \"NOWY TEKST\" w arkuszu \"Teksty\".",
-        "2. Puste pole = zostaje tekst obecny. Wpis \"USUŃ\" = element znika ze strony.",
-        "3. Nie zmieniaj kolumny ID — po niej podstawiamy teksty na stronie.",
-        "4. Kolumna \"Limit znaków\" to sugestia: dłuższy tekst też się zmieści, ale może rozjechać układ.",
-        "5. Jeden wiersz = jeden element na stronie (nagłówek, akapit, przycisk, punkt listy).",
-        "6. Wiersze \"Opis obrazka (alt)\" widzą tylko wyszukiwarki i czytniki ekranu — krótko, rzeczowo.",
-        "7. Wiersze \"Adres linku\" to docelowe adresy (np. LinkedIn, e-mail: mailto:adres@domena.pl).",
-        "8. Uwagi, wątpliwości i prośby o nowe sekcje wpisuj w kolumnę \"UWAGI\".",
-        "9. Odeślij plik w formacie .xlsx — resztę robimy po naszej stronie.",
-    ], start=1):
-        c = info.cell(row=i, column=1, value=line)
-        c.alignment = Alignment(wrap_text=True, vertical="top")
-        if i == 1:
-            c.font = Font(bold=True, size=14)
-
-    ws = wb.create_sheet("Teksty")
-    headers = ["ID", "Sekcja strony", "Rodzaj elementu", "OBECNY TEKST",
-               "Limit znaków", "NOWY TEKST (wypełnij)", "UWAGI", "Element HTML"]
-    ws.append(headers)
-
-    head_fill = PatternFill("solid", fgColor="2F4858")
-    fill_new = PatternFill("solid", fgColor="FFF6E5")
-    thin = Side(style="thin", color="D9D9D9")
-    border = Border(left=thin, right=thin, top=thin, bottom=thin)
-
-    for c in ws[1]:
-        c.font = Font(bold=True, color="FFFFFF")
-        c.fill = head_fill
-        c.alignment = Alignment(wrap_text=True, vertical="center")
-    ws.row_dimensions[1].height = 30
-
-    for i, (section, element, text, ctx) in enumerate(rows, start=1):
-        limit = max(40, int(len(text) * 1.25) // 5 * 5)
-        ws.append([f"T{i:03d}", section, element, text, limit, "", "", ctx])
-
-    widths = [8, 24, 30, 60, 11, 60, 26, 28]
-    for i, w in enumerate(widths, start=1):
-        ws.column_dimensions[get_column_letter(i)].width = w
-
+    info.title = 'Instrukcja'
+    info.column_dimensions['A'].width = 120
+    instructions = [
+        'WZORZEC TEKSTÓW — Katarzyna Chałas — 9 stron',
+        'Wypełnij NOWY TEKST (F) i ewentualnie UWAGI (G) w arkuszu Teksty.',
+        'Puste pole = bez zmiany. USUŃ = usuń wskazany element HTML (w wierszu atrybutu także cały element, np. link).',
+        'Nie zmieniaj ID ani kolumn opisujących obecną stronę. Nie skracaj tekstów do dawnych limitów.',
+        'ID = nazwa pliku bez .html : data-content-id elementu : pole (text, href, alt, content, aria-label).',
+        'Strona, sekcja i selektor HTML w kontekście rozróżniają identyczne nagłówki, etykiety i przyciski.',
+        'Pełne akapity zawierają także wyróżnienia i teksty linków. Zmiana treści wymaga zachowania formatowania i linków w HTML.',
+        'Adres każdego linku (także wewnętrznego) ma osobny wiersz href. Tekst zagnieżdżonego linku znajduje się w jego akapicie.',
+        'Cennik: nazwa usługi i cena są osobnymi wierszami dt/dd. Punkty podlist są osobnymi wierszami.',
+        'Zmiany stosuje wykonawca ręcznie po ID + stronie + polu. Projekt nie zawiera importera, CMS ani panelu.',
+        'Nie zmieniaj data-content-id przy edycji tekstu; przy dodaniu elementu nadaj mu nowy identyfikator unikalny na danej stronie.',
+        'Zmiany struktury, nowych sekcji i kolejności opisz w UWAGACH. Wspólne menu/stopkę zaznacz dla wszystkich odpowiednich stron.',
+        'Odeślij kopię .xlsx pod nową nazwą. Generator chroni arkusz z wpisami w F/G przed nadpisaniem.',
+        'Regeneracja: python3 tools/make_content_template.py. Kontrola: python3 tools/make_content_template.py --check.',
+        'Stare T001–T109 dotyczą wejścia sprzed przebudowy (e92207f). Ich zastosowanie opisano w docs/source-mapping.md.',
+        'Demo pozostaje noindex,nofollow. Robots, SVG, skrypty, style i dekoracje aria-hidden nie są eksportowane.',
+    ]
+    for i, value in enumerate(instructions, 1):
+        c = info.cell(i, 1, value)
+        c.alignment = Alignment(wrap_text=True, vertical='top')
+        info.row_dimensions[i].height = 34
+    info['A1'].font = Font(bold=True, size=15, color='1F3D3A')
+    ws = wb.create_sheet('Teksty')
+    ws.append(['ID', 'Strona (plik)', 'Sekcja', 'Rodzaj elementu', 'OBECNY TEKST', 'NOWY TEKST (wypełnij)', 'UWAGI', 'Kontekst / element HTML', 'Pole / atrybut'])
+    for row in rows:
+        ws.append(row.values())
+    for i, width in enumerate([40, 30, 28, 28, 80, 80, 45, 65, 16], 1):
+        ws.column_dimensions[get_column_letter(i)].width = width
+    for cell in ws[1]:
+        cell.font = Font(bold=True, color='FAF7F2')
+        cell.fill = PatternFill('solid', fgColor='1F3D3A')
+        cell.alignment = Alignment(wrap_text=True, vertical='center')
+    ws.row_dimensions[1].height = 32
     for row in ws.iter_rows(min_row=2):
-        for c in row:
-            c.border = border
-            c.alignment = Alignment(wrap_text=True, vertical="top")
-        row[5].fill = fill_new
-        row[6].fill = fill_new
-        row[7].font = Font(size=8, color="909090")
-
-    ws.freeze_panes = "D2"
-    ws.auto_filter.ref = f"A1:H{ws.max_row}"
-    wb.save(OUT)
-    return ws.max_row - 1
-
-
-def check(rows):
-    texts = [r[2] for r in rows]
-    assert "Szkolenia, mentoring i coaching dla liderek, liderów i zespołów" in texts, "brak H1"
-    assert "MTQ" not in texts  # <text> w ikonie SVG, "tekst z <svg> nie powinien trafic do wzorca"
-    assert "→" not in texts, "elementy aria-hidden pomijamy"
-    assert any(t.startswith("Katarzyna Chałas — psycholożka") for t in texts), "brak meta description"
-    assert sum(1 for r in rows if r[0] == "Oferta") >= 19, "sekcja Oferta niekompletna"
-    assert len(rows) > 60, f"za malo tekstow: {len(rows)}"
-    print(f"OK — {len(rows)} tekstow, sekcje: {sorted({r[0] for r in rows})}")
+        for cell in row:
+            cell.alignment = Alignment(wrap_text=True, vertical='top')
+            if isinstance(cell.value, str):
+                cell.data_type = 's'
+        row[5].fill = PatternFill('solid', fgColor='A8D48E')
+        row[6].fill = PatternFill('solid', fgColor='7DB9E8')
+    ws.freeze_panes = 'F2'
+    ws.auto_filter.ref = ws.dimensions
+    output.parent.mkdir(parents=True, exist_ok=True)
+    wb.save(output)
+    return len(rows)
 
 
-if __name__ == "__main__":
-    p = Extract()
-    p.feed(SRC.read_text(encoding="utf-8"))
-    if "--check" in sys.argv:
-        check(p.rows)
+def check(rows, output=OUT):
+    assert output.is_file(), f'Brak wzorca {output}; najpierw uruchom generator.'
+    assert len({r.id for r in rows}) == len(rows), 'ID muszą być unikalne'
+    assert {r.page for r in rows} == set(PAGES), 'Wymagane wszystkie 9 stron'
+    for page in PAGES:
+        selected = [r for r in rows if r.page == page]
+        doc = Document((ROOT / page).read_text())
+        for tag, attribute in [('title', 'text'), ('h1', 'text')]:
+            nodes = [n for n in doc.nodes if n.tag == tag]
+            assert len(nodes) == 1, (page, tag)
+            assert any(r.attribute == attribute and r.text == nodes[0].text() for r in selected)
+        assert sum(r.kind == 'Opis strony (meta description)' for r in selected) == 1
+        links = [n for n in doc.nodes if n.tag == 'a' and not n.hidden()]
+        assert sum(r.attribute == 'href' for r in selected) == len(links)
+        for node in doc.nodes:
+            if node.tag == 'p' and not node.hidden():
+                assert any(r.attribute == 'text' and r.text == node.text() for r in selected), (page, 'Niepełny akapit', node.text())
+        assert all(r.text not in {'→', 'USUŃ', 'MTQ'} for r in selected)
+    # Focused extraction regressions: inline content, hidden void tags, SVG,
+    # duplicate CTA, lists, source placeholder, every internal link.
+    fixture = '''<main data-section="Test"><img aria-hidden="true" alt="DEKORACJA"><p data-content-id="a">Pełny <strong>akapit</strong> i <a href="index.html#kontakt">link</a>.</p><svg><text>SVG</text></svg><p data-content-id="b">Następny &lt;placeholder&gt;.</p><ul><li>Pierwszy<ul><li>Drugi</li></ul></li></ul><script>SKRYPT</script><style>STYL</style><span aria-hidden="true">OZDOBNIK</span><a data-content-id="c" href="coaching.html">Więcej</a><a data-content-id="d" href="mtq-plus.html">Więcej</a></main>'''
+    sample = extract('fixture.html', fixture)
+    texts = [r.text for r in sample if r.attribute == 'text']
+    assert texts == ['Pełny akapit i link.', 'Następny <placeholder>.', 'Pierwszy', 'Drugi', 'Więcej', 'Więcej'], texts
+    assert [r.text for r in sample if r.attribute == 'href'] == ['index.html#kontakt', 'coaching.html', 'mtq-plus.html']
+    assert len({r.id for r in sample}) == len(sample)
+    assert extract('other.html', fixture)[0].id != sample[0].id
+    assert extract('inline.html', '<p>Opis <strong>ważny </strong>oraz<strong> istotny</strong>.</p>')[0].text == 'Opis ważny oraz istotny.'
+    if output.is_file():
+        wb = load_workbook(output, read_only=True)
+        actual = list(wb['Teksty'].iter_rows(min_row=2, values_only=True))
+        assert len(actual) == len(rows), 'Wzorzec nieaktualny: uruchom generator'
+        for saved, row in zip(actual, rows):
+            expected = row.values()
+            for col in [0, 1, 2, 3, 4, 7, 8]:
+                assert (saved[col] or '') == expected[col], (row.id, 'Wzorzec nieaktualny', col)
+        wb.close()
+    print(f'OK — {len(rows)} unikalnych wierszy; 9 stron; pełne akapity, linki, listy, meta, alt; regresje ekstrakcji.')
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--check', action='store_true')
+    parser.add_argument('--output', type=Path, default=OUT)
+    args = parser.parse_args()
+    content = extract_site()
+    if args.check:
+        check(content, args.output)
     else:
-        print(f"{OUT.name}: {build(p.rows)} wierszy")
+        print(f'{args.output}: {build(content, args.output)} wierszy')

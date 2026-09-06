@@ -1,0 +1,19 @@
+Allrounder Antiqua Test — source and supplied notices
+
+Source: https://font.download/font/allrounder-antiqua-test
+Web kit: https://font.download/dl/web-font/allrounder-antiqua-test-webfont.zip
+Verified: 2026-09-06
+Designer: Moritz Kleinsorge
+
+The distribution page labels the font: Free for personal use
+Copyright preserved in the font files:
+Copyright © 2020 by Moritz Kleinsorge. All rights reserved.
+
+The downloaded OTF archive contains eight font files. The web kit contains
+eight WOFF files, style.css and example.html. Neither archive includes a
+separate EULA or license document. Name-table license fields 13/14 are absent.
+This notice records the supplied information; it grants no additional rights.
+
+The project uses the unmodified Regular and Regular Italic WOFF files for
+the explicitly requested local demo. Selecting the Test package does not
+constitute purchase of a production or web license.

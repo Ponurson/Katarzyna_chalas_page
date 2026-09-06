@@ -1,0 +1,3 @@
+# Only for checking the private source PDFs/Excel, not for serving the website.
+openpyxl>=3.0.9,<4
+PyMuPDF==1.28.2

@@ -1,0 +1,7 @@
+Wytyczne/
+node_modules/
+__pycache__/
+*.pyc
+artifacts/
+dist/
+.venv/

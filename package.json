@@ -1,0 +1,15 @@
+{
+  "name": "katarzyna-chalas-demo",
+  "private": true,
+  "scripts": {
+    "start": "python3 tools/serve_demo.py",
+    "export": "python3 tools/make_content_template.py",
+    "check": "python3 tools/check_site.py && python3 tools/make_content_template.py --check",
+    "check:sources": "python3 tools/check_source_materials.py",
+    "check:browser": "node tools/check_browser.cjs"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.11.1",
+    "playwright": "1.58.2"
+  }
+}
