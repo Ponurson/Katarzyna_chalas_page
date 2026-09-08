@@ -5,7 +5,7 @@ python3 tools/make_content_template.py [--check] [--output PATH]
 Dependencies: openpyxl. Full instructions: README.md.
 """
 import argparse
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from html.parser import HTMLParser
 from pathlib import Path
 import re
@@ -21,6 +21,8 @@ PAGES = (
     'terapia-dzwiekiem.html', 'warsztaty-i-szkolenia.html',
 )
 OUT = ROOT / 'teksty-strony.xlsx'
+CHROME = {'Menu', 'Stopka'}  # wspólny nagłówek i stopka: jeden komplet wierszy zamiast dziewięciu kopii
+SHARED = 'wszystkie strony'
 VOID = {'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'}
 SKIP = {'svg', 'script', 'style', 'template'}
 OWNERS = {'title', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'dt', 'dd', 'figcaption', 'button', 'cite', 'a', 'span', 'small', 'strong', 'em', 'blockquote', 'address'}
@@ -177,8 +179,25 @@ def extract(page, text):
     return result
 
 
+def anchor(href):
+    """Menu i stopka: index kotwiczy w sobie, podstrony przez index.html."""
+    return href.removeprefix('index.html') or '#top'
+
+
+def chrome_key(row):
+    return (row.id.split(':', 1)[1], row.section, row.kind, row.attribute,
+            anchor(row.text) if row.attribute == 'href' else row.text)
+
+
 def extract_site():
-    return [row for page in PAGES for row in extract(page, (ROOT / page).read_text(encoding='utf-8'))]
+    shared, own = [], []
+    for page in PAGES:
+        for row in extract(page, (ROOT / page).read_text(encoding='utf-8')):
+            if row.section not in CHROME:
+                own.append(row)
+            elif page == PAGES[0]:  # index.html jest wzorcem wspólnego menu i stopki
+                shared.append(replace(row, id='wspolne:' + row.id.split(':', 1)[1], page=SHARED))
+    return shared + own
 
 
 def build(rows, output=OUT):
@@ -198,13 +217,15 @@ def build(rows, output=OUT):
         'Puste pole = bez zmiany. USUŃ = usuń wskazany element HTML (w wierszu atrybutu także cały element, np. link).',
         'Nie zmieniaj ID ani kolumn opisujących obecną stronę. Nie skracaj tekstów do dawnych limitów.',
         'ID = nazwa pliku bez .html : data-content-id elementu : pole (text, href, alt, content, aria-label).',
+        'Menu i stopka są wspólne dla dziewięciu stron: mają jeden komplet wierszy "wszystkie strony" i ID wspolne:… — zmiana obowiązuje wszędzie.',
+        'Odnośniki menu i stopki zapisano jak na stronie głównej; na podstronach ten sam odnośnik ma prefiks index.html (np. index.html#kontakt).',
         'Strona, sekcja i selektor HTML w kontekście rozróżniają identyczne nagłówki, etykiety i przyciski.',
         'Pełne akapity zawierają także wyróżnienia i teksty linków. Zmiana treści wymaga zachowania formatowania i linków w HTML.',
         'Adres każdego linku (także wewnętrznego) ma osobny wiersz href. Tekst zagnieżdżonego linku znajduje się w jego akapicie.',
         'Cennik: nazwa usługi i cena są osobnymi wierszami dt/dd. Punkty podlist są osobnymi wierszami.',
         'Zmiany stosuje wykonawca ręcznie po ID + stronie + polu. Projekt nie zawiera importera, CMS ani panelu.',
         'Nie zmieniaj data-content-id przy edycji tekstu; przy dodaniu elementu nadaj mu nowy identyfikator unikalny na danej stronie.',
-        'Zmiany struktury, nowych sekcji i kolejności opisz w UWAGACH. Wspólne menu/stopkę zaznacz dla wszystkich odpowiednich stron.',
+        'Zmiany struktury, nowych sekcji i kolejności opisz w UWAGACH. Wiersze wspólne wystarczy wypełnić raz.',
         'Odeślij kopię .xlsx pod nową nazwą. Generator chroni arkusz z wpisami w F/G przed nadpisaniem.',
         'Regeneracja: python3 tools/make_content_template.py. Kontrola: python3 tools/make_content_template.py --check.',
         'Stare T001–T109 dotyczą wejścia sprzed przebudowy (e92207f). Ich zastosowanie opisano w docs/source-mapping.md.',
@@ -243,10 +264,14 @@ def build(rows, output=OUT):
 def check(rows, output=OUT):
     assert output.is_file(), f'Brak wzorca {output}; najpierw uruchom generator.'
     assert len({r.id for r in rows}) == len(rows), 'ID muszą być unikalne'
-    assert {r.page for r in rows} == set(PAGES), 'Wymagane wszystkie 9 stron'
+    assert {r.page for r in rows} == set(PAGES) | {SHARED}, 'Wymagane wszystkie 9 stron i blok wspólny'
+    reference = None
     for page in PAGES:
-        selected = [r for r in rows if r.page == page]
-        doc = Document((ROOT / page).read_text())
+        text = (ROOT / page).read_text()
+        doc, selected = Document(text), extract(page, text)
+        chrome = [chrome_key(r) for r in selected if r.section in CHROME]
+        reference = reference or chrome  # index.html idzie pierwszy i wyznacza wzorzec
+        assert chrome == reference, (page, 'Menu lub stopka różni się od index.html')
         for tag, attribute in [('title', 'text'), ('h1', 'text')]:
             nodes = [n for n in doc.nodes if n.tag == tag]
             assert len(nodes) == 1, (page, tag)
@@ -258,6 +283,7 @@ def check(rows, output=OUT):
             if node.tag == 'p' and not node.hidden():
                 assert any(r.attribute == 'text' and r.text == node.text() for r in selected), (page, 'Niepełny akapit', node.text())
         assert all(r.text not in {'→', 'USUŃ', 'MTQ'} for r in selected)
+        assert not [r for r in rows if r.page == page and r.section in CHROME], (page, 'Zdublowana stopka/menu')
     # Focused extraction regressions: inline content, hidden void tags, SVG,
     # duplicate CTA, lists, source placeholder, every internal link.
     fixture = '''<main data-section="Test"><img aria-hidden="true" alt="DEKORACJA"><p data-content-id="a">Pełny <strong>akapit</strong> i <a href="index.html#kontakt">link</a>.</p><svg><text>SVG</text></svg><p data-content-id="b">Następny &lt;placeholder&gt;.</p><ul><li>Pierwszy<ul><li>Drugi</li></ul></li></ul><script>SKRYPT</script><style>STYL</style><span aria-hidden="true">OZDOBNIK</span><a data-content-id="c" href="coaching.html">Więcej</a><a data-content-id="d" href="mtq-plus.html">Więcej</a></main>'''
@@ -277,7 +303,9 @@ def check(rows, output=OUT):
             for col in [0, 1, 2, 3, 4, 7, 8]:
                 assert (saved[col] or '') == expected[col], (row.id, 'Wzorzec nieaktualny', col)
         wb.close()
-    print(f'OK — {len(rows)} unikalnych wierszy; 9 stron; pełne akapity, linki, listy, meta, alt; regresje ekstrakcji.')
+    shared = sum(r.page == SHARED for r in rows)
+    print(f'OK — {len(rows)} unikalnych wierszy ({shared} wspólnych dla menu i stopki); 9 stron; '
+          'pełne akapity, linki, listy, meta, alt; regresje ekstrakcji.')
 
 
 if __name__ == '__main__':

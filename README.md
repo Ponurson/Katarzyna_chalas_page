@@ -45,8 +45,9 @@ python tools/make_content_template.py --check
 ```
 
 Na tym hoście wystarcza też systemowy `python3` z zainstalowanym `openpyxl`.
-Wzorzec ma 682 wiersze i kolumny: ID, strona, sekcja, rodzaj, obecny tekst (E),
-nowy tekst (F), uwagi (G), kontekst HTML i pole/atrybut.
+Wzorzec ma 418 wierszy i kolumny: ID, strona, sekcja, rodzaj, obecny tekst (E),
+nowy tekst (F), uwagi (G), kontekst HTML i pole/atrybut. Wspólne menu i stopka
+to jeden blok 33 wierszy na początku arkusza, a nie dziewięć kopii.
 
 1. Wypełniaj F/G w kopii skoroszytu. **Puste F = bez zmiany; USUŃ = usunięcie
    elementu HTML**. W wierszu atrybutu, np. `href`, USUŃ oznacza usunięcie całego
@@ -55,19 +56,26 @@ nowy tekst (F), uwagi (G), kontekst HTML i pole/atrybut.
    Przykładowo ten sam przycisk na innej stronie ma inny ID. Kontekst podaje
    selektor, a dla linków także etykietę i adres. Zmiany stosuje się według tych
    pól, nigdy według samego „Więcej” lub numeru wiersza Excela.
-3. Akapity są eksportowane w całości wraz z tekstem linków i wyróżnień; adresy
+3. Menu i stopka są identyczne na dziewięciu stronach, więc mają jeden komplet
+   wierszy: strona `wszystkie strony`, ID `wspolne:e033:text` lub `wspolne:f05:text`.
+   Nagłówek używa ID `e0xx`, stopka wspólnych `f01`–`f13`; oba są takie same w
+   każdym pliku, a wpis w F trzeba nanieść we wszystkich dziewięciu. Odnośniki
+   zapisano jak na stronie głównej — podstrony mają prefiks `index.html`
+   (`#kontakt` → `index.html#kontakt`). `--check` pilnuje tej zgodności.
+4. Akapity są eksportowane w całości wraz z tekstem linków i wyróżnień; adresy
    linków mają osobne wiersze `href`. Listy, usługi i ceny mają osobne pozycje.
    Zmiana tekstu akapitu musi zachować jego linki i semantyczne formatowanie.
-4. Wykonawca nanosi zmiany ręcznie w HTML. Projekt nie ma importera ani CMS-a.
+5. Wykonawca nanosi zmiany ręcznie w HTML. Projekt nie ma importera ani CMS-a.
    Przy edycji zachowuj `data-content-id`; nowym elementom nadawaj nowe ID,
    unikalne w obrębie pliku. Menu i stopki są jawnie obecne w każdym HTML.
-5. Regeneruj wzorzec po zmianach. Generator odmówi nadpisania skoroszytu
+6. Regeneruj wzorzec po zmianach. Generator odmówi nadpisania skoroszytu
    z wypełnionym F/G; użyj `--output teksty-strony-nowy-wzorzec.xlsx`.
 
 Stare T001–T109 zostały zastosowane przed zmianą kolejności. Ich mapowanie
 pozostaje w `data-source-id` oraz [dokumencie źródeł](docs/source-mapping.md).
 `--check` sprawdza wszystkie strony, pełne akapity, adresy, unikalność ID,
-pomijanie dekoracji i zgodność istniejącego XLSX z HTML; nie zapisuje plików.
+pomijanie dekoracji, identyczność menu i stopki na dziewięciu stronach oraz
+zgodność istniejącego XLSX z HTML; nie zapisuje plików.
 
 ## Weryfikacja
 

@@ -24,7 +24,7 @@ Praca jest w gałęzi `feat/issue-1-brand-rebuild`; źródłowy `main` to `e9220
   zachowano oboczność terapia/masaż, przypisanie cytatu i treść biografii.
 - Mapa PRISM jest konkretnym obrazem z briefu z podpisem źródła. Zachowano
   odnośniki do praktyków PRISM, listy IPTK oraz numer certyfikatu.
-- Wzorzec Excel obejmuje 9 stron i 682 unikalne ID; eksport chroni wypełnione
+- Wzorzec Excel obejmuje 9 stron i 418 unikalnych ID; eksport chroni wypełnione
   arkusze i ma zaktualizowany `--check`. Nie dodano importera ani CMS-a.
 - Każda strona ma własne meta, jeden H1, skip-link, dostępne menu mobilne
   i `noindex,nofollow`. Lokalny serwer nie udostępnia dokumentów źródłowych.
@@ -41,7 +41,7 @@ npm run check:browser
 python tools/check_source_materials.py
 ```
 
-PASS: 9 stron, 201 lokalnych odnośników/zasobów, 682 wiersze eksportu,
+PASS: 9 stron, 201 lokalnych odnośników/zasobów, 418 wierszy eksportu,
 109 starych ID, 45 wpisów F / 16 usunięć, 16 instrukcji G, 131 bloków PDF
 i hashe wszystkich pięciu oryginałów. Browser QA: 45 widoków od 320 px,
 8 kompletnych ścieżek do kontaktu, klawiatura, menu, reduced-motion i brak JS.

@@ -13,7 +13,7 @@ Przeglądarka i serwer działały lokalnie. Nie wykonano deploymentu.
 
 | Kontrola | Wynik |
 | --- | --- |
-| `npm run check` | PASS: 9 stron, 201 lokalnych odnośników/zasobów, kotwice, H1–H3, meta, CTA, ceny, grafiki; 682 unikalne wiersze Excela |
+| `npm run check` | PASS: 9 stron, 201 lokalnych odnośników/zasobów, kotwice, H1–H3, meta, CTA, ceny, grafiki; 418 unikalnych wierszy Excela |
 | `python3 tools/make_content_template.py --check` | PASS: wszystkie strony, pełne akapity, listy, etykiety, href, title/description, alt; brak SVG, skryptów i dekoracji |
 | `python tools/check_source_materials.py` z PyMuPDF | PASS: 5 hashy oryginałów, T001–T109, 45 wpisów F, 16 usunięć, mapowanie instrukcji G, 131 bloków briefu |
 | Stary generator na `e92207f:index.html` | Wszystkie 109 wartości D zgodne z wejściowym Excelem; mapowanie przed zmianą kolejności |
