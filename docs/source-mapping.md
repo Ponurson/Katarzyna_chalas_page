@@ -75,8 +75,8 @@ wskazanymi przy uruchomieniu. Nie zmieniono ich. Katalog jest ignorowany
 przez Git i niedostępny przez lokalny serwer demo. Nowy `teksty-strony.xlsx`
 w katalogu głównym jest oddzielnym eksportem, bez wpisów F/G.
 
-Hero: pełne `5G5A3573_pp.jpg` (1659 × 1476), warianty WebP 640/1000/1400 px.
-O mnie: `5G5A3539_pp.jpg` (3265 × 4898), WebP 480/800/1100 px. Warianty
+Hero: pełne `5G5A3573_pp.jpg` (1659 × 1476), warianty WebP 640/1000/1400 px,
+poza podstroną PRISM (niżej). O mnie: `5G5A3539_pp.jpg` (3265 × 4898), WebP 480/800/1100 px. Warianty
 zachowują proporcje. Kontakt: `assets/portrait-contact.jpg`, identyczny
 z `e92207f`; porównanie wymiarów w [QA.md](QA.md).
 
@@ -84,6 +84,20 @@ z `e92207f`; porównanie wymiarów w [QA.md](QA.md).
 [obrazem wskazanym w briefie](https://prismbrainmapping.pl/wp-content/uploads/2020/07/mapa-prism-brain-mapping.png).
 Witryna korzysta z lokalnego WebP (1726 × 1151), z podpisem
 `prismbrainmapping.pl`. Dekoracja `prism-brain.webp` nie jest używana.
+
+Hero PRISM Brain Mapping (issue #5) to puste koło z `6_Puste_Koło_PRISM.pdf`
+od właścicielki, SHA-256
+`1f27f9a49ad32ca44bfeba4e9a9ae50109b78768d15bb5012bf4c46e272981c0`.
+PDF wyrenderowano poleceniem `pdftoppm -r 400` (4678 × 3307 px) i wycięto kwadrat
+2400 × 2400 px ze środkiem koła w punkcie (1898, 1748). Piksele dalej niż 1113 px
+od środka zamieniono na biel. Ten promień leży w pustym pierścieniu między
+etykietami (do 1098 px) a listami przymiotników i paskami (od 1128 px). Zostaje
+samo koło z ośmioma etykietami na białym tle, bez nagłówka, legendy i tabel.
+Grafiki nie edytowano. Warianty `assets/hero-prism-640/1000/1400.webp` (WebP q90;
+36, 64 i 101 KB) są kwadratowe, a HTML ma `width`/`height` 1000 × 1000.
+Zaokrąglony róg obrazu nie ucina koła przy szerokości okna od 300 do 1600 px;
+najmniej miejsca jest przy 761 px (promień 64 px, obraz 278 px).
+PDF nie trafia do repozytorium.
 Warunki fontów: [assets/fonts/README.md](../assets/fonts/README.md).
 
 ## Stare ID → wdrożony HTML

@@ -7,6 +7,7 @@ from make_content_template import Document, ROOT, PAGES, extract_site
 
 PRICES = [('Sesje coachingowe', '400–600 zł'), ('Interwencja kryzysowa', '250 zł'), ('Masaż dźwiękiem według metody Petera Hessa', '300 zł'), ('PRISM Brain Mapping', '1392 zł'), ('MTQ Plus', 'do uzupełnienia'), ('Warsztaty i szkolenia', 'ustalenia indywidualne')]
 LINKEDIN = 'https://www.linkedin.com/in/katarzyna-cha%C5%82as-747831b8/'
+HERO_SIZES = {'prism-brain-mapping.html': ('1000', '1000')}
 
 
 def check():
@@ -60,7 +61,7 @@ def check():
         preload = next(n for n in nodes if n.tag == 'link' and n.attrs.get('as') == 'image')
         assert hero.attrs['srcset'] == preload.attrs['imagesrcset']
         assert hero.attrs['sizes'] == preload.attrs['imagesizes']
-        assert (hero.attrs['width'], hero.attrs['height']) == ('1659', '1476')
+        assert (hero.attrs['width'], hero.attrs['height']) == HERO_SIZES.get(page, ('1659', '1476')), page
         if page != 'index.html':
             ctas = [n for n in nodes if n.tag == 'a' and n.text().startswith('Umów konsultację')]
             assert len(ctas) == 2

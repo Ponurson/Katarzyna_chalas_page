@@ -6,6 +6,25 @@ cennik. Szczegóły i pomiary laptopów/telefonów:
 [raport zmian po review](docs/review-2026-09-06.md).
 Poniżej zapis pierwotnego wdrożenia i późniejszej konfiguracji publikacji.
 
+## Issue #5 — hero PRISM Brain Mapping
+
+Zgodnie z uwagami właścicielki („PUSTE KOŁO CZTERECH KOLORÓW”) zdjęcie w hero
+`prism-brain-mapping.html` zastąpiono pustym kołem z `6_Puste_Koło_PRISM.pdf`.
+Kadr zawiera samo koło z ośmioma etykietami na białym tle. Grafiki nie edytowano.
+Kwadratowe `assets/hero-prism-640/1000/1400.webp` mają 36, 64 i 101 KB.
+`img` i `preload` mają nowe `src`/`srcset`, `width`/`height` 1000 × 1000 i `alt`
+„Puste koło PRISM Brain Mapping w czterech kolorach”. `tools/check_site.py`
+sprawdza wymiary hero PRISM osobno. W zregenerowanym `teksty-strony.xlsx` zmienił
+się tylko wiersz `prism-brain-mapping:e046:alt`. Render, SHA-256 i kadr opisano
+w [mapowaniu źródeł](docs/source-mapping.md). Hero pozostałych stron i mapa
+w treści (#2) są bez zmian. PDF nie jest w repozytorium.
+
+PASS: `python3 tools/check_site.py`, `python3 tools/make_content_template.py --check`
+(418 wierszy, puste F/G) i `npm run check:browser` (45 widoków, axe, brak błędów
+JS i zasobów). Zrzuty hero przy 2× dla 320, 768 i 1440 px pokazują całe, ostre
+koło; przeglądarka wybiera wariant o co najmniej 2 px obrazu na 1 px CSS.
+Zaokrąglony róg nie ucina koła przy szerokości okna od 300 do 1600 px.
+
 Demo Katarzyny Chałas przebudowano: strona główna i osiem podstron, nowa paleta,
 lokalne Allrounder/Montserrat, nowe zdjęcia oraz pełne teksty z Excela i briefu.
 Praca jest w gałęzi `feat/issue-1-brand-rebuild`; źródłowy `main` to `e92207f`.
