@@ -75,8 +75,9 @@ wskazanymi przy uruchomieniu. Nie zmieniono ich. Katalog jest ignorowany
 przez Git i niedostępny przez lokalny serwer demo. Nowy `teksty-strony.xlsx`
 w katalogu głównym jest oddzielnym eksportem, bez wpisów F/G.
 
-Hero: pełne `5G5A3573_pp.jpg` (1659 × 1476), warianty WebP 640/1000/1400 px,
-poza podstronami PRISM i MTQ Plus (niżej). O mnie: `5G5A3539_pp.jpg` (3265 × 4898), WebP 480/800/1100 px. Warianty
+Hero strony głównej, Mojej drogi i Twojej drogi: pełne `5G5A3573_pp.jpg`
+(1659 × 1476), warianty WebP 640/1000/1400 px. Pozostałe podstrony mają własne
+hero (niżej). O mnie: `5G5A3539_pp.jpg` (3265 × 4898), WebP 480/800/1100 px. Warianty
 zachowują proporcje. Kontakt: `assets/portrait-contact.jpg`, identyczny
 z `e92207f`; porównanie wymiarów w [QA.md](QA.md).
 
@@ -112,6 +113,31 @@ zmieniał kolory krawędzi liter. HTML ma jeden wariant `500w` i `width`/`height
 liter przy szerokości okna od 300 do 1600 px; najmniej miejsca jest przy 761 px
 (109 px pod napisem, promień 64 px). Na ekranach 2× logo jest miękkie, bo plik
 ma tylko 500 px (karta `next_steps` 1925). PNG nie trafia do repozytorium.
+
+Hero Coachingu, Interwencji kryzysowej, Terapii dźwiękiem oraz Warsztatów
+i szkoleń (issue #3) to zdjęcia wskazane przez właścicielkę w sekcji WYMIANA
+ZDJĘĆ dokumentu „Kasia Chałas strona uwagi”. Kadr podano w pikselach oryginału
+(lewy, górny – prawy, dolny). Wycięto go bez retuszu i wyostrzania, przeskalowano
+filtrem Lanczos (Pillow 9.4) i zapisano jako WebP q85, `method=6`. Oryginały mają
+profil sRGB IEC61966-2-1, więc WebP bez profilu ICC zachowuje kolory. EXIF
+nie jest kopiowany.
+
+| Podstrona | Źródło i SHA-256 | Kadr | W kadrze |
+| --- | --- | --- | --- |
+| coaching.html | `5G5A3595_pp.jpg` (3266 × 4898), `7ae141396ff2b055d937cbd29be18d466ea82cb56f45d5f8ee779f77ca456986` | 116, 250 – 3266, 3050: 3150 × 2800, 9:8 | Włosy od y ≈ 400, cała twarz i dłoń przy brodzie z bransoletkami. Druga dłoń leży na oparciu krzesła (y ≈ 3150–3870) pod kadrem; dolna krawędź przecina rękawy 100 px nad jej bransoletką. |
+| interwencja-kryzysowa.html | `5G5A3840_pp.jpg` (4898 × 3265), `44355512148410654aa05630a6aff7c6a4e0575cc20130c2685a0cc96a5a52a6` | 369, 0 – 4041, 3264: 3672 × 3264, 9:8 | Włosy od y ≈ 170, twarz, dłoń przy policzku z bransoletkami, druga dłoń z zegarkiem i oparcie krzesła. Szczebelki pod oparciem ucina już oryginał. |
+| terapia-dzwiekiem.html | `5G5A3696_pp.jpg` (4898 × 3265), `0554ed9cd6a4c291e5e14040ee2b6404f5234fcbcc55eb2c93d92cf5257cde59` | 1880, 0 – 4736, 3264: 2856 × 3264, 7:8 | Cała postać, pałka, misa w dłoniach i trzy misy na podłodze z czterema filcowymi podkładkami (x 2075–4545, y 185–3230). Zapas: 195 px z lewej, 191 px z prawej, 185 px u góry i ok. 34 px na dole, gdzie kończy się zdjęcie. Usunięto 1880 px białego tła z lewej i 162 px z prawej. |
+| warsztaty-i-szkolenia.html | `5G5A3436_pp.jpg` (3265 × 4898), `2c27fb93206b6945e7f3e245f8c676f3c42f2cf3d98933aaca72bd36c64e3b58` | 175, 515 – 2875, 2915: 2700 × 2400, 9:8 | Włosy od y ≈ 640, twarz, kołnierz i ramiona do wysokości piersi. Dłoń w kieszeni (y ≈ 3900–4250) leży pod kadrem; krawędzie nie przecinają dłoni. |
+
+Warianty `assets/hero-coaching-*`, `hero-interwencja-*` i `hero-warsztaty-*`
+mają 640 × 569, 1000 × 889 i 1400 × 1244 px, a `hero-terapia-*` 640 × 731,
+1000 × 1143 i 1400 × 1600 px. Pliki 640/1000/1400 ważą: Coaching 23/47/90 KB,
+Interwencja 39/75/132 KB, Terapia 54/107/176 KB, Warsztaty 14/30/52 KB.
+HTML ma `width`/`height` wariantu 1000 px. Alt Terapii dźwiękiem to „Katarzyna
+Chałas z misami dźwiękowymi”; trzy pozostałe podstrony zachowują „Katarzyna
+Chałas - coach”. Objęcie drugiej dłoni (Coaching, Warsztaty) wymagałoby
+pionowego kadru ok. 8:9 lub 6:7 zamiast 9:8, więc zostaje ona poza kadrem.
+JPG nie trafiają do repozytorium.
 Warunki fontów: [assets/fonts/README.md](../assets/fonts/README.md).
 
 ## Stare ID → wdrożony HTML

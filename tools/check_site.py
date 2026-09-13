@@ -7,7 +7,20 @@ from make_content_template import Document, ROOT, PAGES, extract_site
 
 PRICES = [('Sesje coachingowe', '400–600 zł'), ('Interwencja kryzysowa', '250 zł'), ('Masaż dźwiękiem według metody Petera Hessa', '300 zł'), ('PRISM Brain Mapping', '1392 zł'), ('MTQ Plus', 'do uzupełnienia'), ('Warsztaty i szkolenia', 'ustalenia indywidualne')]
 LINKEDIN = 'https://www.linkedin.com/in/katarzyna-cha%C5%82as-747831b8/'
-HERO_SIZES = {'prism-brain-mapping.html': ('1000', '1000'), 'mtq-plus.html': ('500', '500')}
+
+
+def webp_size(path):
+    """Width and height from a WebP header (lossy VP8, lossless VP8L or extended VP8X)."""
+    with path.open('rb') as file:
+        head = file.read(30)
+    assert head[:4] == b'RIFF' and head[8:12] == b'WEBP', (path, 'To nie jest WebP')
+    if head[12:16] == b'VP8X':
+        return 1 + int.from_bytes(head[24:27], 'little'), 1 + int.from_bytes(head[27:30], 'little')
+    if head[12:16] == b'VP8L':
+        bits = int.from_bytes(head[21:25], 'little')
+        return 1 + (bits & 0x3FFF), 1 + (bits >> 14 & 0x3FFF)
+    assert head[12:16] == b'VP8 ', (path, 'Nieznany format WebP')
+    return int.from_bytes(head[26:28], 'little') & 0x3FFF, int.from_bytes(head[28:30], 'little') & 0x3FFF
 
 
 def check():
@@ -61,7 +74,11 @@ def check():
         preload = next(n for n in nodes if n.tag == 'link' and n.attrs.get('as') == 'image')
         assert hero.attrs['srcset'] == preload.attrs['imagesrcset']
         assert hero.attrs['sizes'] == preload.attrs['imagesizes']
-        assert (hero.attrs['width'], hero.attrs['height']) == HERO_SIZES.get(page, ('1659', '1476')), page
+        for candidate in hero.attrs['srcset'].split(','):
+            file, descriptor = candidate.split()
+            width, height = webp_size(ROOT / file)
+            assert descriptor == f'{width}w', (page, file, 'Deskryptor szerokości niezgodny z plikiem')
+            assert abs(int(hero.attrs['width']) / int(hero.attrs['height']) - width / height) < .005, (page, file, 'width/height niezgodne z proporcjami pliku')
         if page != 'index.html':
             ctas = [n for n in nodes if n.tag == 'a' and n.text().startswith('Umów konsultację')]
             assert len(ctas) == 2

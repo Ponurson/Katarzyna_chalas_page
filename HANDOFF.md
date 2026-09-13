@@ -6,6 +6,40 @@ cennik. Szczegóły i pomiary laptopów/telefonów:
 [raport zmian po review](docs/review-2026-09-06.md).
 Poniżej zapis pierwotnego wdrożenia i późniejszej konfiguracji publikacji.
 
+## Issue #3 — hero Coachingu, Interwencji kryzysowej, Terapii dźwiękiem i Warsztatów
+
+Zgodnie z uwagami właścicielki (sekcja WYMIANA ZDJĘĆ) cztery podstrony mają
+nowe zdjęcia w hero: `coaching.html` — `5G5A3595_pp.jpg`,
+`interwencja-kryzysowa.html` — `5G5A3840_pp.jpg`, `terapia-dzwiekiem.html` —
+`5G5A3696_pp.jpg`, `warsztaty-i-szkolenia.html` — `5G5A3436_pp.jpg`. Coaching,
+Interwencja i Warsztaty mają kadr 9:8 jak dotychczasowe hero: cała głowa
+z zapasem nad włosami i cała twarz. Dłonie przy twarzy są w całości, a krawędzie
+nie przecinają żadnej dłoni. Druga dłoń (Coaching: na oparciu krzesła,
+Warsztaty: w kieszeni) jest pod kadrem. Terapia dźwiękiem ma kadr 7:8: cała
+postać, pałka i wszystkie misy z podkładkami, a z białego tła zostało ok. 190 px
+zapasu z boków. Zdjęć nie retuszowano.
+
+Warianty `assets/hero-{coaching,interwencja,terapia,warsztaty}-640/1000/1400.webp`
+(WebP q85) przy 1400 px mają 90, 132, 176 i 52 KB. `img` i `preload` mają nowe
+`src`/`srcset`, a `width`/`height` odpowiadają wariantowi 1000 px (1000 × 889,
+Terapia 1000 × 1143). Alt Terapii dźwiękiem to „Katarzyna Chałas z misami
+dźwiękowymi”, pozostałe są bez zmian. `tools/check_site.py` odczytuje wymiary
+z nagłówków WebP zamiast słownika `HERO_SIZES`. Deskryptor `w` każdego wariantu
+musi równać się szerokości pliku, a proporcje `width`/`height` proporcjom pliku
+(tolerancja 0,005). W zregenerowanym `teksty-strony.xlsx` zmieniły się tylko
+cztery wiersze `…:e046:alt` (ścieżka obrazu, alt Terapii). Kadry i SHA-256
+opisano w [mapowaniu źródeł](docs/source-mapping.md). Hero strony głównej,
+Mojej drogi i Twojej drogi są bez zmian. JPG nie są w repozytorium.
+
+PASS: `python3 tools/check_site.py`, `python3 tools/make_content_template.py --check`
+(418 wierszy, puste F/G) i `npm run check:browser` (45 widoków, axe, brak błędów
+JS i zasobów). Kontrola odrzuca zmieniony `height` i zły deskryptor `w`. Przy 2×
+dla 320, 390, 768 i 1440 px przeglądarka wybiera wariant o 2,4–3,6 px obrazu
+na 1 px CSS; włosy, rzęsy i bransoletki są ostre. Zaokrąglony róg nie ucina
+postaci, mis ani podkładek przy szerokości okna od 300 do 1600 px. Najmniej
+miejsca jest przy 761 px: 16,5 px CSS do podkładki. Na trzech zdjęciach 9:8
+róg nie sięga głowy, twarzy ani dłoni.
+
 ## Issue #4 — hero MTQ Plus
 
 Zgodnie z uwagami właścicielki („logotyp badania MTQ Plus znajdujący się
