@@ -6,6 +6,32 @@ cennik. Szczegóły i pomiary laptopów/telefonów:
 [raport zmian po review](docs/review-2026-09-06.md).
 Poniżej zapis pierwotnego wdrożenia i późniejszej konfiguracji publikacji.
 
+## Issue #4 — hero MTQ Plus
+
+Zgodnie z uwagami właścicielki („logotyp badania MTQ Plus znajdujący się
+w folderze”) zdjęcie w hero `mtq-plus.html` zastąpiono logo z `4.png`
+(500 × 500 px). Przezroczyste tło zamieniono na białe; logo nie skalowano,
+nie kadrowano i nie edytowano. `assets/hero-mtq-plus.webp` to bezstratny WebP
+(5 KB). `img` i `preload` mają `src`/`srcset` z jednym wariantem `500w`,
+`width`/`height` 500 × 500 i `alt` „Logo badania MTQ Plus”.
+`tools/check_site.py` sprawdza wymiary hero MTQ Plus osobno. W zregenerowanym
+`teksty-strony.xlsx` zmienił się tylko wiersz `mtq-plus:e046:alt` (alt i ścieżka
+obrazu w kontekście). Konwersję i SHA-256 opisano w
+[mapowaniu źródeł](docs/source-mapping.md). Hero pozostałych stron są bez zmian.
+PNG nie jest w repozytorium.
+
+PASS: `python3 tools/check_site.py`, `python3 tools/make_content_template.py --check`
+(418 wierszy, puste F/G) i `npm run check:browser` (45 widoków, axe, brak błędów
+JS i zasobów). Zrzuty przy 390 × 844 i 1440 × 900 (1× i 2×) pokazują całe logo
+w proporcjach 1:1. Ramka leży pod nieprzezroczystym obrazem, a zaokrąglony róg
+nie ucina liter przy szerokości okna od 300 do 1600 px. Litery zaczynają się
+ok. 8 px od bocznych krawędzi pliku, więc prawie dotykają brzegów białego kwadratu.
+
+Logo jest nieostre na ekranach 2×: przy 450 px CSS przeglądarka rozciąga 500 px
+do 900 px. Krawędzie liter mają przejście 10–90 % szerokie na ok. 3,8 px
+urządzenia, a wektorowy H1 obok 1,9 px. Karta `next_steps` **1925** prosi
+o logo jako SVG albo PNG co najmniej 1000 × 1000 px.
+
 ## Issue #5 — hero PRISM Brain Mapping
 
 Zgodnie z uwagami właścicielki („PUSTE KOŁO CZTERECH KOLORÓW”) zdjęcie w hero

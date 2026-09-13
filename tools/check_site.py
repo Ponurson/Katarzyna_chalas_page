@@ -7,7 +7,7 @@ from make_content_template import Document, ROOT, PAGES, extract_site
 
 PRICES = [('Sesje coachingowe', '400–600 zł'), ('Interwencja kryzysowa', '250 zł'), ('Masaż dźwiękiem według metody Petera Hessa', '300 zł'), ('PRISM Brain Mapping', '1392 zł'), ('MTQ Plus', 'do uzupełnienia'), ('Warsztaty i szkolenia', 'ustalenia indywidualne')]
 LINKEDIN = 'https://www.linkedin.com/in/katarzyna-cha%C5%82as-747831b8/'
-HERO_SIZES = {'prism-brain-mapping.html': ('1000', '1000')}
+HERO_SIZES = {'prism-brain-mapping.html': ('1000', '1000'), 'mtq-plus.html': ('500', '500')}
 
 
 def check():

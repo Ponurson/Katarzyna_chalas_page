@@ -76,7 +76,7 @@ przez Git i niedostępny przez lokalny serwer demo. Nowy `teksty-strony.xlsx`
 w katalogu głównym jest oddzielnym eksportem, bez wpisów F/G.
 
 Hero: pełne `5G5A3573_pp.jpg` (1659 × 1476), warianty WebP 640/1000/1400 px,
-poza podstroną PRISM (niżej). O mnie: `5G5A3539_pp.jpg` (3265 × 4898), WebP 480/800/1100 px. Warianty
+poza podstronami PRISM i MTQ Plus (niżej). O mnie: `5G5A3539_pp.jpg` (3265 × 4898), WebP 480/800/1100 px. Warianty
 zachowują proporcje. Kontakt: `assets/portrait-contact.jpg`, identyczny
 z `e92207f`; porównanie wymiarów w [QA.md](QA.md).
 
@@ -98,6 +98,20 @@ Grafiki nie edytowano. Warianty `assets/hero-prism-640/1000/1400.webp` (WebP q90
 Zaokrąglony róg obrazu nie ucina koła przy szerokości okna od 300 do 1600 px;
 najmniej miejsca jest przy 761 px (promień 64 px, obraz 278 px).
 PDF nie trafia do repozytorium.
+
+Hero MTQ Plus (issue #4) to logo `4.png` od właścicielki (PNG 500 × 500 px
+z paletą i przezroczystym tłem), SHA-256
+`e0db831cd9f46a25a5cf77feb6e7d94f77b13130c6844a8b6636e53d0a47f155`.
+Pod przezroczystymi pikselami zapisano kolor (71, 112, 76), więc konwersja bez
+kanału alfa daje zielone tło. Logo nałożono na biel (Pillow `alpha_composite`)
+bez skalowania, kadrowania i edycji; na przezroczystym tle przez literę M
+przechodziłaby linia ramki `.hero-media::after`. `assets/hero-mtq-plus.webp`
+to bezstratny WebP (5 KB), zgodny piksel w piksel z nałożeniem; stratny WebP
+zmieniał kolory krawędzi liter. HTML ma jeden wariant `500w` i `width`/`height`
+500 × 500. Napis zajmuje x 8–491 i y 194–303 px, więc zaokrąglony róg nie ucina
+liter przy szerokości okna od 300 do 1600 px; najmniej miejsca jest przy 761 px
+(109 px pod napisem, promień 64 px). Na ekranach 2× logo jest miękkie, bo plik
+ma tylko 500 px (karta `next_steps` 1925). PNG nie trafia do repozytorium.
 Warunki fontów: [assets/fonts/README.md](../assets/fonts/README.md).
 
 ## Stare ID → wdrożony HTML
