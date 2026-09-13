@@ -45,7 +45,7 @@ python tools/make_content_template.py --check
 ```
 
 Na tym hoście wystarcza też systemowy `python3` z zainstalowanym `openpyxl`.
-Wzorzec ma 418 wierszy i kolumny: ID, strona, sekcja, rodzaj, obecny tekst (E),
+Wzorzec ma 373 wiersze i kolumny: ID, strona, sekcja, rodzaj, obecny tekst (E),
 nowy tekst (F), uwagi (G), kontekst HTML i pole/atrybut. Wspólne menu i stopka
 to jeden blok 33 wierszy na początku arkusza, a nie dziewięć kopii.
 
@@ -63,7 +63,7 @@ to jeden blok 33 wierszy na początku arkusza, a nie dziewięć kopii.
    zapisano jak na stronie głównej — podstrony mają prefiks `index.html`
    (`#kontakt` → `index.html#kontakt`). `--check` pilnuje tej zgodności.
 4. Akapity są eksportowane w całości wraz z tekstem linków i wyróżnień; adresy
-   linków mają osobne wiersze `href`. Listy, usługi i ceny mają osobne pozycje.
+   linków mają osobne wiersze `href`. Punkty list mają osobne pozycje.
    Zmiana tekstu akapitu musi zachować jego linki i semantyczne formatowanie.
 5. Wykonawca nanosi zmiany ręcznie w HTML. Projekt nie ma importera ani CMS-a.
    Przy edycji zachowuj `data-content-id`; nowym elementom nadawaj nowe ID,
@@ -111,8 +111,7 @@ Gita lub serwowanej witryny. SHA-256 oryginałów zapisano w
 
 Pochodzenie, warunki i ograniczenie polskich glifów w Allrounder Test opisano w
 [assets/fonts/README.md](assets/fonts/README.md). Pełny font z uprawnieniami jest
-w istniejącej karcie `next_steps` **1879**, projekt 1753. Cena MTQ Plus oraz
-placeholdery tekstowe pozostają zgodne z decyzjami właściciela.
+w istniejącej karcie `next_steps` **1879**, projekt 1753.
 
 Przebudowa jest opublikowana na GitHub Pages:
 <https://ponurson.github.io/Katarzyna_chalas_page/>. Pages buduje z gałęzi `main`

@@ -46,7 +46,9 @@ na stronie głównej zachowują `#kontakt`, `#oferta` i dokładny adres LinkedIn
 HTML. Numery bloków pochodzą z PyMuPDF 1.28.2 i są chronione hashem PDF.
 `data-brief-block` ułatwia odszukanie akapitów w HTML. Kontrola normalizuje
 odstępy i numerację list (przeniesioną do HTML), zachowując słowa i kolejność.
-Ceny są dodatkowo sprawdzane jako sześć par nazwa–wartość.
+Od issue #6 pomija 19 bloków i wiersze T022, T031, T035, T039, T045, które
+zastąpił arkusz tekstów właścicielki ([HANDOFF](../HANDOFF.md)). Ten arkusz
+usunął też cennik.
 
 | Strona | Strony briefu | Zakres |
 | --- | --- | --- |
@@ -61,9 +63,10 @@ Ceny są dodatkowo sprawdzane jako sześć par nazwa–wartość.
 | warsztaty-i-szkolenia.html | 18–19 | Opis, cennik, tematy, programy dla kobiet, sposób pracy i dopasowanie |
 
 Zielone etykiety i żółte komentarze są instrukcjami układu. Polecenia dodania
-przycisku wykonano jako CTA. Placeholdery we właściwym tekście pozostają:
-pytania o wykształcenie i wydarzenia, wielokropki zamiast lat/liczb, zasięg
-akcji, a także `<tu wpisać firmy, w których pracowałaś i z którymi
+przycisku wykonano jako CTA. Placeholdery we właściwym tekście zostały do
+issue #6, w którym arkusz właścicielki je zastąpił lub usunął: pytania
+o wykształcenie i wydarzenia, wielokropki zamiast lat/liczb, zasięg akcji,
+a także `<tu wpisać firmy, w których pracowałaś i z którymi
 współpracowałaś>` (w HTML `&lt;` / `&gt;`). Zachowano przypisanie cytatu Franklowi,
 oboczność terapia/masaż i certyfikat `KK/95830225/2024`.
 
@@ -144,7 +147,8 @@ Warunki fontów: [assets/fonts/README.md](../assets/fonts/README.md).
 
 45 wpisów F, w tym 16 usunięć; pozostałe 64 puste F zachowują dotychczasową
 treść, z jawnymi wyjątkami powyżej. T023/T024 są podzielone na pełne akapity,
-T018 na cytat i podpis, a T088 na akapit oraz semantyczny cennik.
+T018 na cytat i podpis, a T088 na akapit oraz semantyczny cennik (usunięty
+w issue #6).
 
 | ID wejścia | Decyzja F | Cel w index.html |
 | --- | --- | --- |
@@ -235,7 +239,7 @@ T018 na cytat i podpis, a T088 na akapit oraz semantyczny cennik.
 | T085 | Nowy tekst | `[data-source-id="T085"]` |
 | T086 | Bez zmiany tekstu | `[data-source-id="T086"]` |
 | T087 | Bez zmiany tekstu | `[data-source-id="T087"]` |
-| T088 | Nowy tekst | `[data-source-id="T088"]` + `.pricing` (nagłówek, zdanie, 6 par dt/dd) |
+| T088 | Nowy tekst | `[data-source-id="T088"]`; `.pricing` usunięty w issue #6 |
 | T089 | Bez zmiany tekstu | `[data-source-id="T090"]` — `href` LinkedIn |
 | T090 | Bez zmiany tekstu | `[data-source-id="T090"]` → `https://www.linkedin.com/in/katarzyna-cha%C5%82as-747831b8/` |
 | T091 | Bez zmiany tekstu | `[data-source-id="T092"]` — `href` LinkedIn |

@@ -13,6 +13,10 @@ import pymupdf
 from openpyxl import load_workbook
 from make_content_template import Document, ROOT, normal
 
+# Issue #6: arkusz tekstów właścicielki zastąpił te wiersze T i bloki briefu (HANDOFF.md).
+SUPERSEDED_ROWS = {'T022', 'T031', 'T035', 'T039', 'T045'}
+SUPERSEDED_BLOCKS = {56, 79, 81, 82, 83, 85, 110, 166, 193, 233, 235, 239, 240, 241, 242, 243, 246, 253, 254}
+
 
 def tokens(text):
     return ' '.join(re.findall(r'[^\W_]+|[<>…]', text))
@@ -39,6 +43,8 @@ def audit(source):
     home = Document((ROOT / 'index.html').read_text())
     for r in rows:
         ident, before, after = r[0], r[3], r[5]
+        if ident in SUPERSEDED_ROWS:
+            continue
         nodes = [n for n in home.nodes if n.attrs.get('data-source-id') == ident]
         if after == 'USUŃ':
             assert not nodes, ('Niewykonane usunięcie', ident)
@@ -50,16 +56,14 @@ def audit(source):
             assert node.attrs['href'] == expected
         elif ident == 'T003':
             assert any(n.tag == 'a' and n.text() == expected and n.attrs.get('href') == '#main-content' for n in home.nodes)
-        elif ident == 'T088':
+        elif ident == 'T088':  # cennik po akapicie usunięto w issue #6
             assert nodes[0].text() == expected.split(' CENNIK ')[0]
-            assert 'Jeśli jedyną przeszkodą są pieniądze, zadzwoń, napisz, razem znajdziemy najlepsze dla Ciebie rozwiązanie.' in home.root.text()
-            # Semantic price terms/values are independently checked by check_site.py.
         else:
             assert len(nodes) == 1, (ident, len(nodes))
             node = nodes[0]
             actual = node.attrs.get('content') if node.tag == 'meta' else node.attrs.get('alt') if node.tag == 'img' else node.text()
             assert actual == expected, (ident, actual, expected)
-    print('OK — T001–T109: 45 wartości F, 16 usunięć, zachowane puste F; kontrakt cennika sprawdzany osobno.')
+    print(f'OK — T001–T109: 45 wartości F, 16 usunięć, zachowane puste F; {len(SUPERSEDED_ROWS)} wierszy zastąpionych w issue #6.')
     routes = {32: 'moja-droga.html', 36: 'twoja-droga.html', 40: 'warsztaty-i-szkolenia.html', 43: 'interwencja-kryzysowa.html', 46: 'coaching.html', 49: 'terapia-dzwiekiem.html', 52: 'mtq-plus.html', 55: 'prism-brain-mapping.html'}
     for ident, route in routes.items():
         assert next(n for n in home.nodes if n.attrs.get('data-source-id') == f'T{ident:03}').attrs['href'] == route
@@ -92,12 +96,14 @@ def audit(source):
         main = next(n for n in Document((ROOT / page).read_text()).nodes if n.tag == 'main')
         actual = tokens(main.text())
         for i in indices:
+            if i in SUPERSEDED_BLOCKS:
+                continue
             expected = corrected(blocks[i]).replace('<COACHING>', '')
             expected = re.sub(r'<link:?\s+https://[^>]+>', '', expected)
             expected = re.sub(r'\s*–\s*wpisane w excela\s*$', '', expected)
             expected = re.sub(r'\b[1-9]\.\s+', '', expected).replace('·', ' ').replace('●', ' ')
             assert tokens(expected) in actual, (page, i, expected)
-    print(f'OK — {sum(map(len, ranges.values()))} bloków briefu: wszystkie akapity, nagłówki, listy i placeholdery; tylko jawne korekty.')
+    print(f'OK — {sum(map(len, ranges.values())) - len(SUPERSEDED_BLOCKS)} bloków briefu: akapity, nagłówki, listy; tylko jawne korekty; {len(SUPERSEDED_BLOCKS)} zastąpionych w issue #6.')
 
 
 if __name__ == '__main__':

@@ -6,6 +6,53 @@ cennik. Szczegóły i pomiary laptopów/telefonów:
 [raport zmian po review](docs/review-2026-09-06.md).
 Poniżej zapis pierwotnego wdrożenia i późniejszej konfiguracji publikacji.
 
+## Issue #6 — teksty z wypełnionego arkusza właścicielki
+
+Źródło to wzorzec `teksty-strony.xlsx` wypełniony przez właścicielkę, pobrany
+z Google Drive (id `1J1P34PYw813n_r3la1kDh0pa8pEx8kxC`, SHA-256
+`16da8752156dae73801d71e47e50ef64df3fa393640ed5e8a6ee120a83e4c0af`). Lokalnie
+leży w `poprawki/teksty-zmiany.xlsx`; `poprawki/` jest ignorowany przez Git.
+Arkusz ma 418 ID wzorca z `f963550` i wpisy F/G w 65 wierszach. Przed zmianą
+kolumna E tych wierszy zgadzała się z HTML.
+
+Wprowadzono 64 wiersze: 17 nowych tekstów dosłownie, z interpunkcją właścicielki
+(także z usuniętymi kropkami), oraz 46 usunięć razem z pustymi kontenerami.
+Usunięto cały cennik: `div.pricing` na stronie głównej i `section.article-pricing`
+w Warsztatach. Z Warsztatów zniknęła też sekcja „Dla liderów, zespołów
+i organizacji” z listą tematów. Z Mojej drogi zniknęły „Background prawniczy”,
+nagłówek wydarzeń z listą i akapit o doświadczeniu z placeholderami. Zgodnie
+z uwagą w G pod „Certyfikowana Coachka ICC Poland” jest nowy `li` `e081`
+(kolejny wolny ID) o studiach w Akademii Leona Koźmińskiego. Wiersz
+`prism-brain-mapping:e056:href` (puste koło zamiast mapy) należy do #2 i go
+pominięto.
+
+Usunięto nieużywane style `.pricing`, `.price-list`, `.article-pricing` i zrzut
+`cennik` w `tools/check_browser.cjs`. Zamiast sześciu par cen `tools/check_site.py`
+sprawdza, że żadna strona nie zawiera słów „cennik” ani „zł”. Pilnuje też braku
+placeholderów w Mojej drodze i miejsca wersu o Koźmińskim pod ICC Poland.
+Opcjonalny `tools/check_source_materials.py` pomija wiersze T022, T031, T035,
+T039, T045 i 19 bloków briefu zastąpionych arkuszem. Zregenerowany
+`teksty-strony.xlsx` ma 373 wiersze (418 − 46 + 1) i puste F/G; z instrukcji
+usunięto zdanie o cenniku. Porównanie `extract_site()` przed zmianą i po niej:
+zmieniły się tylko ID z arkusza i doszedł nowy `li`, a pozostałe 353 wiersze
+są identyczne. Nowe teksty są równe kolumnie F po normalizacji odstępów.
+
+PASS: `python3 tools/check_site.py`, `python3 tools/make_content_template.py --check`
+(373 wiersze) i `npm run check:browser` (45 widoków, axe, brak błędów JS
+i zasobów, brak poziomego przewijania). Przechodzi też
+`tools/check_source_materials.py` (PyMuPDF 1.28.2 w tymczasowym venv;
+112 bloków, 19 zastąpionych). Na zrzutach 390 × 844 i 1440 × 900 nie ma pustych
+sekcji. W miejscach usunięć odstęp akapit → H2 wynosi 48 px, jak w reszcie
+artykułu, a lista → akapit 32 px. Kontakt kończy się zwykłym dopełnieniem sekcji.
+`noindex,nofollow` bez zmian.
+
+Do potwierdzenia z właścicielką (nie blokuje, karta `next_steps` **1926**):
+nowy akapit e084 w Warsztatach mówi o „kobietach i mężczyznach 55+”. Nagłówek
+e083 „Focus na odporność psychiczną i wellbeing kobiet” i akapit e085 o kobietach
+nie mają wpisów, więc zostały bez zmian. Bez wpisu zostały też nagłówek e088
+„Szkolenie dopasowane do rzeczywistej potrzeby” i meta description z
+„przywództwa”.
+
 ## Issue #3 — hero Coachingu, Interwencji kryzysowej, Terapii dźwiękiem i Warsztatów
 
 Zgodnie z uwagami właścicielki (sekcja WYMIANA ZDJĘĆ) cztery podstrony mają

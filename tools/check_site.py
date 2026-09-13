@@ -5,7 +5,6 @@ from urllib.parse import unquote, urlsplit
 import re
 from make_content_template import Document, ROOT, PAGES, extract_site
 
-PRICES = [('Sesje coachingowe', '400–600 zł'), ('Interwencja kryzysowa', '250 zł'), ('Masaż dźwiękiem według metody Petera Hessa', '300 zł'), ('PRISM Brain Mapping', '1392 zł'), ('MTQ Plus', 'do uzupełnienia'), ('Warsztaty i szkolenia', 'ustalenia indywidualne')]
 LINKEDIN = 'https://www.linkedin.com/in/katarzyna-cha%C5%82as-747831b8/'
 
 
@@ -44,6 +43,7 @@ def check():
         assert not re.search(r'\bMTQ\b(?!\s+Plus)', text), (page, 'Nazwa narzędzia: MTQ Plus')
         for forbidden in ['MTQPlus', 'Reflecitve', 'Prioritatization', 'Interwention', 'Dysposition', 'wpisane w excela', 'Dodać przycisk', 'USUŃ']:
             assert forbidden not in text, (page, forbidden)
+        assert not re.search(r'cennik|\bzł\b', text, re.I), (page, 'Cennik i ceny usunięte (issue #6)')
         assert not any('narzedzia' in n.attrs.get('href', '') or n.attrs.get('id') == 'narzedzia' for n in nodes)
         assert any(n.tag == 'a' and n.attrs.get('href') == '#main-content' for n in nodes)
         assert any(n.tag == 'main' and n.attrs.get('id') == 'main-content' and n.attrs.get('tabindex') == '-1' for n in nodes)
@@ -94,18 +94,16 @@ def check():
     titles = [n.text() for n in offer.walk() if n.tag == 'h3']
     assert titles == ['Coaching', 'Interwencja kryzysowa', 'PRISM Brain Mapping', 'MTQ Plus', 'Terapia dźwiękiem', 'Warsztaty i szkolenia']
     assert [n.attrs['href'] for n in offer.walk() if n.tag == 'a'] == ['coaching.html', 'interwencja-kryzysowa.html', 'prism-brain-mapping.html', 'mtq-plus.html', 'terapia-dzwiekiem.html', 'warsztaty-i-szkolenia.html']
-    for page in ['index.html', 'warsztaty-i-szkolenia.html']:
-        dl = next(n for n in docs[page].nodes if n.tag == 'dl')
-        names = [n.text() for n in dl.walk() if n.tag == 'dt']
-        prices = [n.text() for n in dl.walk() if n.tag == 'dd']
-        assert list(zip(names, prices)) == PRICES, (page, names, prices)
     contact = next(n for n in home.nodes if n.attrs.get('id') == 'kontakt')
     assert sum(n.tag == 'a' and n.attrs.get('href') == LINKEDIN for n in contact.walk()) == 3
     for n in home.nodes:
         if n.tag == 'a' and n.text() == 'Umów konsultację' and not any(a.attrs.get('id') == 'kontakt' for a in n.ancestors()):
             assert n.attrs['href'] == '#kontakt'
     assert any(n.tag == 'a' and n.text() == 'Poznaj ofertę' and n.attrs['href'] == '#oferta' for n in home.nodes)
-    assert '<tu wpisać firmy, w których pracowałaś i z którymi współpracowałaś>' in docs['moja-droga.html'].root.text()
+    journey = docs['moja-droga.html']
+    assert not re.search(r'<tu wpisać|Kasia –|Widziałam coś|\(kurs\?', journey.root.text()), 'Placeholdery Mojej drogi (issue #6)'
+    education = [n.text() for n in journey.nodes if n.tag == 'li']
+    assert education[education.index('Certyfikowana Coachka ICC Poland') + 1].startswith('Akademia Leona Koźmińskiego'), education
     inter = docs['interwencja-kryzysowa.html'].root.text()
     assert 'KK/95830225/2024' in inter
     for phrase in ['Reflective listening', 'Assessment of needs', 'Prioritization', 'Intervention', 'Disposition']:
@@ -122,7 +120,7 @@ def check():
     assert 'prefers-reduced-motion' in css
     rows = extract_site()
     assert len(rows) == len({r.id for r in rows})
-    print(f'OK — 9 stron, {count} lokalnych odnośników/zasobów, kotwice, meta, nagłówki, ceny, CTA, źródła, fotografie i {len(rows)} ID.')
+    print(f'OK — 9 stron, {count} lokalnych odnośników/zasobów, kotwice, meta, nagłówki, brak cennika, CTA, źródła, fotografie i {len(rows)} ID.')
 
 
 if __name__ == '__main__':

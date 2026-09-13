@@ -222,7 +222,7 @@ def build(rows, output=OUT):
         'Strona, sekcja i selektor HTML w kontekście rozróżniają identyczne nagłówki, etykiety i przyciski.',
         'Pełne akapity zawierają także wyróżnienia i teksty linków. Zmiana treści wymaga zachowania formatowania i linków w HTML.',
         'Adres każdego linku (także wewnętrznego) ma osobny wiersz href. Tekst zagnieżdżonego linku znajduje się w jego akapicie.',
-        'Cennik: nazwa usługi i cena są osobnymi wierszami dt/dd. Punkty podlist są osobnymi wierszami.',
+        'Punkty list i podlist są osobnymi wierszami.',
         'Zmiany stosuje wykonawca ręcznie po ID + stronie + polu. Projekt nie zawiera importera, CMS ani panelu.',
         'Nie zmieniaj data-content-id przy edycji tekstu; przy dodaniu elementu nadaj mu nowy identyfikator unikalny na danej stronie.',
         'Zmiany struktury, nowych sekcji i kolejności opisz w UWAGACH. Wiersze wspólne wystarczy wypełnić raz.',

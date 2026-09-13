@@ -164,14 +164,6 @@ strong { font-weight: 650; }
 .contact-image img { width: 24vw; height: clamp(319.528125px, 26.9303385vw, 480px); object-fit: cover; object-position: 55% 28%; border-radius: 3px 3px 56px 3px; }
 .contact-details { font-size: .8rem; line-height: 1.8; font-style: normal; text-align: center; overflow-wrap: anywhere; }
 .contact-details p { margin-bottom: .6rem; }
-.pricing { display: grid; grid-template-columns: minmax(0,.8fr) minmax(0,1.2fr); gap: clamp(2rem, 6vw, 6rem); margin-top: 4rem; padding: 3rem; border-radius: 3px; background: var(--soft-green); }
-.pricing h3 { font-size: 2.5rem; }
-.pricing > div > p { font-size: .88rem; }
-.price-list { margin: 0; }
-.price-list > div { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--line); font-size: .84rem; }
-.price-list > div:first-child { padding-top: 0; }
-.price-list dt { max-width: 35ch; }
-.price-list dd { margin: 0; text-align: right; font-weight: 600; }
 .site-footer { padding-block: 3.5rem 1.5rem; background: var(--ink); color: var(--paper); }
 .footer-main { display: grid; grid-template-columns: 1.5fr 1fr .6fr; gap: 2.5rem; margin-bottom: 3rem; }
 .site-footer .brand-mark { color: var(--green); }
@@ -201,8 +193,6 @@ strong { font-weight: 650; }
 .prism-map img { width: 100%; }
 .prism-map figcaption { padding-top: .8rem; font-size: .72rem; }
 .article-cta { margin-top: 3rem; padding-top: 2.5rem; border-top: 1px solid var(--line); }
-.article-pricing { padding: 1.8rem; background: var(--soft-green); margin-block: 2rem; }
-.article-pricing h2 { border: 0; padding-top: 0; }
 @media (max-width: 1279px) {
   .hero:not(.page-hero) h1 { font-size: clamp(2.1rem, 3.2vw, 2.4rem); }
   .hero:not(.page-hero) .hero-lead { font-size: .9rem; line-height: 1.6; }
@@ -270,7 +260,7 @@ strong { font-weight: 650; }
   .hero-quote { margin-top: 1.6rem; }
   .button-row { gap: .6rem; }
   .button { padding: .85rem 1.05rem; }
-  .change-grid, .about-grid, .journey, .pricing, .contact-intro { grid-template-columns: 1fr; gap: 2rem; }
+  .change-grid, .about-grid, .journey, .contact-intro { grid-template-columns: 1fr; gap: 2rem; }
   .change-heading h2 { max-width: none; margin-bottom: 0; }
   .change-mark { display: none; }
   .prose { font-size: .92rem; }
@@ -286,9 +276,6 @@ strong { font-weight: 650; }
   .section-heading { margin-bottom: 2rem; }
   .benefit-list { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .contact-image { min-height: 340px; }
-  .pricing { margin-top: 2.5rem; padding: 1.75rem; }
-  .price-list > div { font-size: .78rem; }
-  .price-list dd { max-width: 15ch; }
   .footer-main { grid-template-columns: 1fr; gap: 2rem; }
   .site-footer .brand { max-width: 100%; }
   .footer-social { grid-column: auto; }
@@ -296,7 +283,6 @@ strong { font-weight: 650; }
   .page-hero h1 { font-size: clamp(2.2rem, 10vw, 3.3rem); }
   .page-hero .hero-media { max-width: 450px; }
   .back-link { margin-bottom: 1.4rem; }
-  .article-pricing { padding: 1.25rem; }
 }
 @media (max-width: 440px) {
   .offer-grid, .audience-grid { grid-template-columns: 1fr; }
@@ -308,8 +294,6 @@ strong { font-weight: 650; }
   .brand-copy strong { font-size: .86rem; }
   .brand-copy small { font-size: .5rem; }
   .trust-grid { gap: 1rem; }
-  .price-list > div { grid-template-columns: minmax(0,1fr) minmax(90px,.65fr); gap: .8rem; }
-  .article-pricing { padding: 1rem; }
 }
 @media (max-width: 700px) {
   .contact-image img { width: 60vw; height: max(204px, 55.4054054vw); }

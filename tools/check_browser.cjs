@@ -165,7 +165,7 @@ async function layout(page) {
         await page.screenshot({ path: path.join(output, screenshot), fullPage: true, type: 'jpeg', quality: 78 });
         if (file === 'index.html') {
           await page.screenshot({ path: path.join(output, `hero-${width}.jpg`), type: 'jpeg', quality: 85 });
-          for (const [section, selector] of [['kontakt', '#kontakt'], ['cennik', '.pricing'], ['oferta', '#oferta'], ['omnie', '#omnie']]) {
+          for (const [section, selector] of [['kontakt', '#kontakt'], ['oferta', '#oferta'], ['omnie', '#omnie']]) {
             await page.locator(selector).evaluate(element => scrollTo({ top: scrollY + element.getBoundingClientRect().top - 112, behavior: 'instant' }));
             await page.screenshot({ path: path.join(output, `${section}-${width}.jpg`), type: 'jpeg', quality: 82 });
           }
