@@ -10,7 +10,7 @@ const { chromium } = require('playwright');
 const AxeBuilder = require('@axe-core/playwright').default;
 
 const root = path.resolve(__dirname, '..');
-const output = path.join(root, 'artifacts/browser');
+const output = path.resolve(root, process.env.QA_OUTPUT_DIR || 'artifacts/browser');
 const pages = ['index.html', 'moja-droga.html', 'twoja-droga.html', 'coaching.html',
   'interwencja-kryzysowa.html', 'prism-brain-mapping.html', 'mtq-plus.html',
   'terapia-dzwiekiem.html', 'warsztaty-i-szkolenia.html'];
@@ -30,7 +30,9 @@ function checkPi() {
 }
 
 function startPreview() {
-  const child = spawn(process.env.PYTHON || 'python3', ['tools/serve_demo.py', '--port', '0'], { cwd: root });
+  const args = ['tools/serve_demo.py', '--port', '0'];
+  if (process.env.SITE_DIR) args.push('--site-dir', process.env.SITE_DIR);
+  const child = spawn(process.env.PYTHON || 'python3', args, { cwd: root });
   const ready = new Promise((resolve, reject) => {
     const timer = setTimeout(() => reject(new Error('Nie uruchomiono lokalnego podglądu.')), 10000);
     child.once('error', error => { clearTimeout(timer); reject(error); });
@@ -267,7 +269,7 @@ async function layout(page) {
     await noScript.close();
     assert.deepEqual(report.errors, [], 'Błędy JavaScript / sieci');
     report.status = 'passed';
-    console.log(`OK — ${report.views.length} widoków, 8 pełnych ścieżek, menu, CTA, reduced-motion, brak JS i prywatne materiały. Raport: artifacts/browser/report.json`);
+    console.log(`OK — ${report.views.length} widoków, 8 pełnych ścieżek, menu, CTA, reduced-motion, brak JS i prywatne materiały. Raport: ${path.join(output, 'report.json')}`);
   } catch (error) {
     report.status = 'failed';
     report.failure = error.stack;

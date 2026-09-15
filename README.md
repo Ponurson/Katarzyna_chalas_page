@@ -111,6 +111,28 @@ Gita lub serwowanej witryny. SHA-256 oryginałów zapisano w
 
 ## Fonty i publikacja
 
+### Vercel i przeniesienie źródeł
+
+Konfiguracja `vercel.json` publikuje wyłącznie katalog `dist`:
+
+```bash
+npm run build
+python3 tools/serve_demo.py --site-dir dist
+SITE_DIR=dist QA_OUTPUT_DIR=artifacts/vercel-browser npm run check:browser
+```
+
+Eksport wymaga tylko Node.js, bez instalowania zależności ani Pythona na Vercel.
+Zawiera dziewięć stron, stronę 404, CSS, JS, obrazy, fonty i ich licencje.
+404 otrzymuje adresy od korzenia domeny, również dla błędnych zagnieżdżonych
+ścieżek. Dokumenty robocze, XLSX i narzędzia nie trafiają do `dist`.
+Importuj repozytorium z presetem **Other**, gałęzią produkcyjną **main**
+i katalogiem głównym repozytorium. Pozostałe ustawienia są w `vercel.json`.
+
+Stan transferu, blokady dostępu i kroki podpięcia domeny:
+[docs/deployment.md](docs/deployment.md).
+
+### Dotychczasowy podgląd GitHub Pages
+
 Nagłówki, marka, hasła i cytat używają Cormorant Infant (SIL OFL 1.1) z kompletem
 polskich znaków. Właścicielka wybrała go w karcie **1879** zamiast Allrounder
 Antiqua Test. Wagę dobrano tak, by grubość kreski była jak w Allrounderze.
