@@ -1,15 +1,15 @@
 @font-face {
-  font-family: "Allrounder Antiqua Test";
-  src: url("assets/fonts/AllrounderAntiquaTest-Regular.woff") format("woff");
+  font-family: "Cormorant Infant";
+  src: url("assets/fonts/CormorantInfant-Variable.woff2") format("woff2");
   font-style: normal;
-  font-weight: 400;
+  font-weight: 300 700;
   font-display: swap;
 }
 @font-face {
-  font-family: "Allrounder Antiqua Test";
-  src: url("assets/fonts/AllrounderAntiquaTest-RegularItalic.woff") format("woff");
+  font-family: "Cormorant Infant";
+  src: url("assets/fonts/CormorantInfant-Italic-Variable.woff2") format("woff2");
   font-style: italic;
-  font-weight: 400;
+  font-weight: 300 700;
   font-display: swap;
 }
 @font-face {
@@ -27,8 +27,10 @@
   --paper: #FAF7F2;
   --soft-green: color-mix(in srgb, var(--green) 12%, var(--paper));
   --line: rgb(31 61 58 / 20%);
-  /* The supplied Test fonts lack Polish glyphs; see assets/fonts/README.md. */
-  --serif: "Allrounder Antiqua Test", Georgia, serif;
+  --serif: "Cormorant Infant", Georgia, serif;
+  /* Stroke weight of the former Allrounder Antiqua Regular/Italic; see assets/fonts/README.md. */
+  --serif-weight: 530;
+  --serif-italic-weight: 560;
   --sans: Montserrat, Arial, sans-serif;
   --container: 1240px;
 }
@@ -47,7 +49,7 @@ a:hover { text-decoration-thickness: 2px; }
 .site-footer :focus-visible, .benefits :focus-visible { outline-color: var(--blue); }
 ::selection { background: var(--green); color: var(--ink); }
 h1, h2, h3, p, blockquote { margin-top: 0; }
-h1, h2, h3 { font-family: var(--serif); font-weight: 400; font-synthesis: none; line-height: 1.13; text-wrap: balance; overflow-wrap: anywhere; }
+h1, h2, h3 { font-family: var(--serif); font-weight: var(--serif-weight); font-synthesis: none; line-height: 1.13; text-wrap: balance; overflow-wrap: anywhere; }
 h1 { margin-bottom: 1.5rem; font-size: clamp(2.3rem, 4.3vw, 4rem); letter-spacing: -.035em; }
 h2 { margin-bottom: 1.5rem; font-size: clamp(2rem, 3.5vw, 3.1rem); letter-spacing: -.025em; }
 h3 { margin-bottom: 1rem; font-size: 1.7rem; }
@@ -76,7 +78,7 @@ strong { font-weight: 650; }
 .brand-mark { width: auto; height: 47px; flex-shrink: 0; }
 .site-header .brand-mark { color: var(--green); }
 .brand-copy { display: grid; gap: .4rem; line-height: 1.15; }
-.brand-copy strong { font: 400 1.12rem/1.2 var(--serif); letter-spacing: .035em; }
+.brand-copy strong { font: var(--serif-weight) 1.12rem/1.2 var(--serif); letter-spacing: .035em; }
 .brand-copy small { display: block; max-width: 31ch; font-size: .55rem; line-height: 1.5; letter-spacing: .07em; }
 .site-nav { display: flex; align-items: center; gap: 1.9rem; }
 .site-nav > a:not(.button) { padding-block: 12px; font-size: .78rem; font-weight: 500; text-decoration: none; }
@@ -93,7 +95,7 @@ strong { font-weight: 650; }
 .hero-media { isolation: isolate; }
 .hero-media img { width: 100%; height: auto; border-radius: 3px 3px 64px 3px; }
 .hero-quote { margin: 2rem 0 0; padding: 1.25rem 0 0 1.2rem; border-top: 1px solid var(--line); border-left: 2px solid var(--green); }
-.hero-quote p { margin-bottom: .65rem; font: italic 400 1.18rem/1.6 var(--serif); font-synthesis: none; }
+.hero-quote p { margin-bottom: .65rem; font: italic var(--serif-italic-weight) 1.18rem/1.6 var(--serif); font-synthesis: none; }
 .hero-quote cite { display: block; font: 500 .7rem/1.5 var(--sans); }
 /* Compact the complete home introduction while keeping the photo dimensions.
    The copy fills the photo's row; both columns reserve the frame's bottom gap. */
@@ -114,7 +116,7 @@ strong { font-weight: 650; }
 .prose { min-width: 0; }
 .prose p:last-child { margin-bottom: 0; }
 .prose strong { font-weight: 650; }
-.prose .statement, .about-copy .statement { font: 400 1.3rem/1.55 var(--serif); font-synthesis: none; }
+.prose .statement, .about-copy .statement { font: var(--serif-weight) 1.3rem/1.55 var(--serif); font-synthesis: none; }
 .about-grid { display: grid; grid-template-columns: minmax(0,.85fr) minmax(0,1.15fr); gap: clamp(2.5rem, 6vw, 6rem); align-items: center; }
 /* Independent portrait height, close to its previous 591 px laptop rendering. */
 .about-portrait { height: 37rem; }

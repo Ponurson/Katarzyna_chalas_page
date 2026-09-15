@@ -6,6 +6,48 @@ cennik. Szczegóły i pomiary laptopów/telefonów:
 [raport zmian po review](docs/review-2026-09-06.md).
 Poniżej zapis pierwotnego wdrożenia i późniejszej konfiguracji publikacji.
 
+## Karta 1879 — Cormorant Infant zamiast Allroundera
+
+Zgodnie z odpowiedzią właścicielki w karcie **1879** („Niech zamieni Allroundera
+na Cormorant Infant i dopasuje grubość fontu…”) nagłówki, marka, hasła i cytat
+używają Cormorant Infant z Google Fonts (SIL OFL 1.1). Usunięto oba WOFF Allrounder
+Antiqua Test i `Allrounder-NOTICE.txt`. Font nie wymaga zakupu licencji ani plików
+od właścicielki. Montserrat jest bez zmian.
+
+`assets/fonts/CormorantInfant-Variable.woff2` (43 KB) i
+`CormorantInfant-Italic-Variable.woff2` (45 KB) to podzbiory fontów zmiennych
+z google/fonts `3dd7884`. Obejmują łacinę z rozszerzeniami A i B, więc mają
+`ĄĆĘŁŃÓŚŹŻąćęłńóśźż`. Preload na dziewięciu stronach wskazuje nowy plik prosty.
+
+Wagę dobrano pomiarem. Miarą jest średnia grubość kreski (2 × pole / obwód
+konturu) względem wysokości x, liczona na znakach tekstów szeryfowych strony.
+Allrounderowi Regular odpowiada waga 529, a Italic 564. W CSS ustawiono
+`--serif-weight: 530` i `--serif-italic-weight: 560`. Pozostałe miary dają
+467–516 i 514–583; tabela jest w [dokumentacji fontów](assets/fonts/README.md).
+Rozmiarów, odstępów liter i interlinii nie zmieniano. Wysokość x Cormoranta to
+78 % Allroundera, więc przy tych samych rozmiarach nagłówki są optycznie mniejsze
+i krótsze. H1 strony głównej przy 1440 px ma 2 wiersze zamiast 3, a H1
+Interwencji kryzysowej 1 zamiast 2.
+
+`tools/check_browser.cjs` oczekuje rodziny `"Cormorant Infant"` w H1. Przy 1440 px
+odczytuje z DevTools (`CSS.getPlatformFontsForNode`) fonty, które narysowały H1–H3,
+markę, hasła i cytat. Font systemowy wśród nich przerywa test. Próba z podstawionym
+podzbiorem ASCII bez polskich liter kończy się błędem `index.html: brak glifów
+Cormorant Infant system LiberationSerif,…`. DevTools podaje nazwę domyślnej
+instancji pliku zmiennego (`CormorantInfant-Light`); wagę 530/560 ustawia CSS.
+
+PASS: `python3 tools/check_site.py`, `python3 tools/make_content_template.py --check`
+(373 wiersze; teksty bez zmian, więc wzorca nie regenerowano) i
+`npm run check:browser` (45 widoków, axe, brak błędów JS i zasobów, 61–66 °C).
+Na dziewięciu stronach tekst szeryfowy rysuje wyłącznie Cormorant Infant.
+Na stronie głównej tekst hero od 1024 px i O mnie od 1081 px do 1920 px ma
+wysokość zdjęć (proporcja 1,0000). Żadna strona nie przewija się poziomo przy
+28 szerokościach od 300 do 1920 px. Porównano zrzuty przed i po przy 1440 × 900
+i 390 × 844 (2×) oraz próbki wag 400–700.
+
+Poza zakresem zgłoszono kartę `bugs` **1933**: strzałki „←” w linku powrotu
+podstron nie ma w podzbiorze Montserrat, więc rysuje ją font systemowy.
+
 ## Issue #6 — teksty z wypełnionego arkusza właścicielki
 
 Źródło to wzorzec `teksty-strony.xlsx` wypełniony przez właścicielkę, pobrany
@@ -180,12 +222,9 @@ Lokalne zrzuty i JSON: `artifacts/browser/` (ignorowane w Git).
 
 ## Zależność od właściciela
 
-Wskazany Allrounder Antiqua **Test** nie zawiera polskich glifów. Demo używa
-prawdziwych Regular/Regular Italic, a brakujące znaki rysuje systemowy serif.
-Pełny font z polskimi literami i uprawnieniami wymaga dostarczenia przez właściciela.
-Istniejąca karta Super Jirki **1879**, projekt 1753, `next_steps`, została
-zweryfikowana; nie utworzono duplikatu. [Źródło i warunki](assets/fonts/README.md).
-Nie kupiono licencji ani nie uznano pakietu Test za licencję produkcyjną.
+Font nagłówków nie jest już zależnością. W karcie **1879** właścicielka wybrała
+Cormorant Infant (SIL OFL 1.1) zamiast Allrounder Antiqua Test bez polskich glifów.
+[Źródło, podzbiór i dopasowanie wagi](assets/fonts/README.md).
 
 LinkedIn zwraca automatycznemu klientowi HTTP 999. Zachowany dokładny URL,
 otwarcie nowej karty i bezpieczny brak `window.opener` są sprawdzone.
@@ -197,7 +236,7 @@ Przebudowa jest już na GitHub Pages pod
 <https://ponurson.github.io/Katarzyna_chalas_page/>. Wykonano to osobnym zadaniem:
 `feat/issue-1-brand-rebuild` scalono do `main` (fast-forward), a Pages buduje
 z `main` / `/`. Konfiguracji Pages, widoczności repo ani `noindex,nofollow`
-nie zmieniono. Warunki fontu pozostają osobnym zakresem.
+nie zmieniono. Font rozstrzygnięto później w karcie 1879.
 
 Przed zakończeniem porównywane są lokalny HEAD i ref tej gałęzi na origin.
 Commit można odczytać przez `git log -1 --oneline`; bieżący stan przez

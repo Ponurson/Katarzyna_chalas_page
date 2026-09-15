@@ -88,6 +88,8 @@ npm run check:browser
 
 Ostatnia komenda sama uruchamia lokalny serwer i Chromium, wykonuje kolejno
 45 widoków, audyt axe, obsługę menu/klawiatury i osiem ścieżek oferta–kontakt.
+Przy 1440 px sprawdza w DevTools, że tekst szeryfowy rysuje Cormorant Infant,
+bez fontu systemowego w miejscu brakujących glifów.
 Zrzuty i JSON trafiają do ignorowanego `artifacts/browser/`. Domyślnie korzysta
 z `/usr/bin/chromium`, jeśli jest obecny; gdzie indziej z przeglądarki Playwright
 (`npx playwright install chromium`). Można podać `CHROMIUM_PATH`.
@@ -109,9 +111,10 @@ Gita lub serwowanej witryny. SHA-256 oryginałów zapisano w
 
 ## Fonty i publikacja
 
-Pochodzenie, warunki i ograniczenie polskich glifów w Allrounder Test opisano w
-[assets/fonts/README.md](assets/fonts/README.md). Pełny font z uprawnieniami jest
-w istniejącej karcie `next_steps` **1879**, projekt 1753.
+Nagłówki, marka, hasła i cytat używają Cormorant Infant (SIL OFL 1.1) z kompletem
+polskich znaków. Właścicielka wybrała go w karcie **1879** zamiast Allrounder
+Antiqua Test. Wagę dobrano tak, by grubość kreski była jak w Allrounderze.
+Źródło, podzbiór i pomiar opisano w [assets/fonts/README.md](assets/fonts/README.md).
 
 Przebudowa jest opublikowana na GitHub Pages:
 <https://ponurson.github.io/Katarzyna_chalas_page/>. Pages buduje z gałęzi `main`
