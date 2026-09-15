@@ -7,6 +7,25 @@ Transfer istniejącego repozytorium `Ponurson/Katarzyna_chalas_page` zachowa
 historię i issues. Docelowa nazwa: `katarzynachalas/Katarzyna_chalas_page`.
 Nie należy tworzyć drugiego repozytorium o tej nazwie przed przyjęciem transferu.
 
+## Stan na koniec pracy — 2026-09-15
+
+Konfiguracja i sprawdzony eksport są w commicie `abdb7db`, wypchniętym na
+`origin/main`. Następnie GitHub API przyjęło żądanie transferu repozytorium
+(ID `1341669712`) do `katarzynachalas`.
+Kontrola po żądaniu nadal wskazuje właściciela `Ponurson`; docelowy adres
+repozytorium zwraca HTTP 404. Transfer oczekuje na przyjęcie przez odbiorczynię.
+Lokalny `origin` i repo projektu Super Jirka pozostają przy dotychczasowym
+adresie do potwierdzenia zakończenia transferu.
+
+Utworzono karty `next_steps` w projekcie 1753:
+
+- **1936** — przyjęcie transferu w ciągu 24 godzin, następnie aktualizacja
+  remote oraz repo projektu.
+- **1937** — dostęp do Vercel, autoryzacja repozytorium, właściwa domena/DNS
+  oraz kontrola rzeczywistej publikacji.
+
+Pełne przepięcie GitHub → Vercel → domena nie jest jeszcze zakończone.
+
 ## Gotowa konfiguracja
 
 | Ustawienie | Wartość |
