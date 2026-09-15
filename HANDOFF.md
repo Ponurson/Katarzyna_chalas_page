@@ -1,10 +1,46 @@
 # Handoff — issue #1
 
+## Karty 1933 i 1934 — strzałki i wielkość fontu (2026-09-15)
+
+Dokończono zmiany zatrzymane limitem poprzedniego agenta. Wszystkie rozmiary
+Cormorant Infant zwiększono o 2 pt (2⅔ px CSS), z uwzględnieniem breakpointów,
+marki, haseł i cytatu. Montserrat, w tym nagłówki sekcji Dla biznesu, zachował
+rozmiary. Nagłówek „Jak mogę wesprzeć Ciebie i Twój zespół” używa Cormorant
+Infant o wadze 530 — zmiana rodziny z Allrounder Antiqua wynika z karty 1879.
+W tej poprawce zwiększono jego rozmiar tak jak pozostałych nagłówków Cormorant.
+
+W ośmiu linkach powrotu znak ← zastąpiono SVG z `aria-hidden="true"`.
+Przed poprawką DevTools pokazywało jeden glif systemowego Liberation Sans
+obok tekstu Montserrat. Kontrola fontów przeglądarki obejmuje teraz także
+`.back-link`, aby wykryć ponowny fallback. Dostępna nazwa to „Strona główna”,
+cel linku pozostaje ten sam. Zregenerowano wzorzec Excel (368 wierszy).
+Odstępy przy przyciskach hero na desktopie zmniejszono, aby większy tekst
+nadal mieścił się na wysokości zdjęcia. Pomiar przeszedł dla 11 szerokości
+od 1024 do 1920 px; 364 próbki tekstu przy 390/768/1440 px potwierdziły
+przyrost o 2 pt tylko dla Cormorant Infant.
+
+PASS: `npm run check`, `npm run check:browser` (45 widoków, osiem ścieżek,
+axe, fonty bez fallbacku w nagłówkach i linkach powrotu), `git diff --check`.
+
+
 Aktualizacja po review: monogram KC, ciemny nagłówek, wyrównane kolumny tekstu
 i zdjęć, przywrócone tła i kafelki, Montserrat Bold w Dla biznesu, baner oraz
 cennik. Szczegóły i pomiary laptopów/telefonów:
 [raport zmian po review](docs/review-2026-09-06.md).
 Poniżej zapis pierwotnego wdrożenia i późniejszej konfiguracji publikacji.
+
+## Karta 1914 — zamknięte issue #1
+
+Issue #1 było nadal otwarte z etykietą `ready-for-agent`, choć przebudowę wdrożono
+(karta 1869) i opublikowano (`c0788bb`). 2026-09-15 zamknięto je jako ukończone
+i zdjęto etykietę, żeby agent wybierający zadania po niej nie powtórzył przebudowy.
+[Komentarz zamykający](https://github.com/Ponurson/Katarzyna_chalas_page/issues/1#issuecomment-5677266728)
+wymienia zmiany, które zastąpiły część opisu (hero podstron, cennik, font, mapa
+PRISM, publikacja). Opisu issue nie należy więc wdrażać ponownie. Przed zamknięciem
+sprawdzono, że dziewięć stron na Pages zwraca 200 i ma `noindex,nofollow`.
+
+Karta **1935** zakończona 2026-09-15: issues #3–#6 zamknięto po sprawdzeniu
+implementacji i GitHub Pages; zdjęto etykiety `ready-for-agent`.
 
 ## Karta 1931 — usunięta mapa PRISM w treści
 

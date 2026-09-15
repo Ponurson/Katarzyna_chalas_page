@@ -84,15 +84,15 @@ async function menuChecks(page) {
   assert(!await page.locator('body').evaluate(body => body.classList.contains('menu-open')));
 }
 
-// Fonts that actually drew the serif text, from DevTools. A system font means a glyph
-// (e.g. a Polish letter) is missing from Cormorant Infant and fell back.
+// Fonts that actually drew headings and back links, from DevTools.
+// A system font reveals a missing glyph (e.g. a Polish letter or arrow).
 async function serifFonts(page) {
   const cdp = await page.context().newCDPSession(page);
   await cdp.send('DOM.enable');
   await cdp.send('CSS.enable');
   const { root } = await cdp.send('DOM.getDocument', { depth: -1 });
   const { nodeIds } = await cdp.send('DOM.querySelectorAll', { nodeId: root.nodeId,
-    selector: 'h1, h2, h3, .brand-copy strong, .statement, .hero-quote p' });
+    selector: 'h1, h2, h3, .brand-copy strong, .statement, .hero-quote p, .back-link' });
   const fonts = new Set();
   for (const nodeId of nodeIds) {
     for (const font of (await cdp.send('CSS.getPlatformFontsForNode', { nodeId })).fonts) {
@@ -165,7 +165,7 @@ async function layout(page) {
         assert(geometry.fonts.filter(font => font.style === 'normal').every(font => font.status === 'loaded'));
         if (width === 1440) {
           geometry.serifFonts = await serifFonts(page);
-          assert(!geometry.serifFonts.some(font => font.startsWith('system')), `${file}: brak glifów Cormorant Infant ${geometry.serifFonts}`);
+          assert(!geometry.serifFonts.some(font => font.startsWith('system')), `${file}: font systemowy w nagłówkach lub linku powrotu ${geometry.serifFonts}`);
         }
         for (const image of geometry.images) {
           if (image.fit === 'fill') assert(Math.abs(image.width / image.height - image.naturalWidth / image.naturalHeight) < .005, `${file}: zdeformowany obraz`);
