@@ -57,7 +57,7 @@ usunął też cennik.
 | twoja-droga.html | 9–10 | Zmiana, sposoby wsparcia, możliwe efekty |
 | coaching.html | 10–11 | ICC, proces, korzyści, standardy, 90 minut / co dwa tygodnie |
 | interwencja-kryzysowa.html | 11–13 | Kontakt, definicja, RAPID, etapy, certyfikat, lista IPTK |
-| prism-brain-mapping.html | 13–15 | Doświadczenie, badanie, konkretna mapa, interpretacja, lista praktyków |
+| prism-brain-mapping.html | 13–15 | Doświadczenie, badanie, interpretacja, lista praktyków; mapę z briefu usunięto (karta 1931) |
 | mtq-plus.html | 15–16 | Doświadczenie, cztery obszary / osiem wymiarów, omówienie |
 | terapia-dzwiekiem.html | 16–18 | Pełny masaż, przebieg, metoda Petera Hessa, zaproszenie |
 | warsztaty-i-szkolenia.html | 18–19 | Opis, cennik, tematy, programy dla kobiet, sposób pracy i dopasowanie |
@@ -84,10 +84,11 @@ hero (niżej). O mnie: `5G5A3539_pp.jpg` (3265 × 4898), WebP 480/800/1100 px. W
 zachowują proporcje. Kontakt: `assets/portrait-contact.jpg`, identyczny
 z `e92207f`; porównanie wymiarów w [QA.md](QA.md).
 
-`assets/mapa-prism-brain-mapping.png` porównano bajtowo z
-[obrazem wskazanym w briefie](https://prismbrainmapping.pl/wp-content/uploads/2020/07/mapa-prism-brain-mapping.png).
-Witryna korzysta z lokalnego WebP (1726 × 1151), z podpisem
-`prismbrainmapping.pl`. Dekoracja `prism-brain.webp` nie jest używana.
+Przykładową mapę PRISM z briefu (figura z podpisem `prismbrainmapping.pl`
+pod opisem badania) usunięto na prośbę właścicielki w karcie 1931. Razem z nią
+zniknęły `assets/mapa-prism-brain-mapping.png` i `.webp` oraz styl `.prism-map`.
+Koło PRISM pokazuje teraz tylko hero (niżej). Dekoracja `prism-brain.webp`
+nie jest używana.
 
 Hero PRISM Brain Mapping (issue #5) to puste koło z `6_Puste_Koło_PRISM.pdf`
 od właścicielki, SHA-256

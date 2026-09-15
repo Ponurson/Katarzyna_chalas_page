@@ -110,8 +110,7 @@ def check():
         assert phrase in inter
     assert any(n.attrs.get('href') == 'https://www.iptk.pl/listakonsultantow/' for n in docs['interwencja-kryzysowa.html'].nodes)
     assert any(n.attrs.get('href') == 'https://prismbrainmapping.pl/praktycy-prism/' for n in docs['prism-brain-mapping.html'].nodes)
-    assert any(n.attrs.get('src') == 'assets/mapa-prism-brain-mapping.webp' for n in docs['prism-brain-mapping.html'].nodes)
-    assert any(n.tag == 'figcaption' and 'prismbrainmapping.pl' in n.text() for n in docs['prism-brain-mapping.html'].nodes)
+    assert not any(n.tag == 'figcaption' or 'mapa-prism' in n.attrs.get('src', '') + n.attrs.get('href', '') for n in docs['prism-brain-mapping.html'].nodes), 'Mapę PRISM w treści usunięto na prośbę właścicielki (karta 1931)'
     css = (ROOT / 'styles.css').read_text()
     for url in re.findall(r'url\("([^\"]+)"\)', css):
         assert (ROOT / url).is_file(), url

@@ -6,6 +6,34 @@ cennik. Szczegóły i pomiary laptopów/telefonów:
 [raport zmian po review](docs/review-2026-09-06.md).
 Poniżej zapis pierwotnego wdrożenia i późniejszej konfiguracji publikacji.
 
+## Karta 1931 — usunięta mapa PRISM w treści
+
+Zgodnie z kartą **1931** („Usuń tę grafikę”, zrzut ekranu telefonu
+`IMG-20260915-WA0002.jpg`) z `prism-brain-mapping.html` usunięto przykładową mapę
+PRISM spod akapitu e053. Zniknęła cała `figure.prism-map`: link do pełnego
+rozmiaru (e056), obraz (e057) i podpis „Źródło: prismbrainmapping.pl” (e058, e059).
+Po akapicie od razu jest H2 „Co pokazuje PRISM Brain Mapping?”. Pozostałe teksty
+i hero z pustym kołem (#5) są bez zmian.
+
+Usunięto też `assets/mapa-prism-brain-mapping.webp` (195 KB) i `.png` (1,6 MB),
+których nic już nie używa, więc Pages przestaje je publikować, oraz styl
+`.prism-map`. `tools/check_site.py` zamiast obecności mapy sprawdza, że podstrona
+PRISM nie ma `figcaption` ani odwołania do `mapa-prism`. Na HTML sprzed zmiany
+kontrola kończy się błędem. Zregenerowany `teksty-strony.xlsx` ma 368 wierszy
+(373 − 5). Zniknęły tylko wiersze `prism-brain-mapping:e056:href`,
+`e056:aria-label`, `e057:alt`, `e058:text` i `e059:href`. Pozostałe wiersze
+i instrukcja są identyczne, a F/G puste. Usunięcie opisano
+w [mapowaniu źródeł](docs/source-mapping.md); `docs/QA.md` to raport historyczny.
+Issue #2 (zamiana tej mapy na puste koło z PDF-u) straciło aktualność.
+
+PASS: `python3 tools/check_site.py` (200 lokalnych odnośników/zasobów, wcześniej
+201), `python3 tools/make_content_template.py --check` (368 wierszy),
+`tools/check_source_materials.py` (PyMuPDF 1.28.2 w tymczasowym venv; 112 bloków,
+19 zastąpionych, jak przed zmianą) i `npm run check:browser` (45 widoków, axe,
+brak błędów JS i zasobów, 61–66 °C). Na podstronie PRISM przy 390 × 844
+i 1440 × 900 odstęp akapit e053 → H2 wynosi 48 px, jak w reszcie artykułu,
+a strona nie przewija się poziomo.
+
 ## Karta 1879 — Cormorant Infant zamiast Allroundera
 
 Zgodnie z odpowiedzią właścicielki w karcie **1879** („Niech zamieni Allroundera

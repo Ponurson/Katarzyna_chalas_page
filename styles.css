@@ -191,9 +191,6 @@ strong { font-weight: 650; }
 .steps > li > p { margin-bottom: .8rem; }
 .steps ul { margin-block: .8rem; }
 .rapid-list { padding: 1.5rem 1.5rem 1rem 2.7rem !important; background: color-mix(in srgb, var(--green) 20%, var(--paper)); }
-.prism-map { margin-block: 2.5rem; padding: 1rem; border: 1px solid var(--line); background: white; }
-.prism-map img { width: 100%; }
-.prism-map figcaption { padding-top: .8rem; font-size: .72rem; }
 .article-cta { margin-top: 3rem; padding-top: 2.5rem; border-top: 1px solid var(--line); }
 @media (max-width: 1279px) {
   .hero:not(.page-hero) h1 { font-size: clamp(2.1rem, 3.2vw, 2.4rem); }
