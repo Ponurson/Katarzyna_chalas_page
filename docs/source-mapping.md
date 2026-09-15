@@ -87,8 +87,7 @@ z `e92207f`; porównanie wymiarów w [QA.md](QA.md).
 Przykładową mapę PRISM z briefu (figura z podpisem `prismbrainmapping.pl`
 pod opisem badania) usunięto na prośbę właścicielki w karcie 1931. Razem z nią
 zniknęły `assets/mapa-prism-brain-mapping.png` i `.webp` oraz styl `.prism-map`.
-Koło PRISM pokazuje teraz tylko hero (niżej). Dekoracja `prism-brain.webp`
-nie jest używana.
+Koło PRISM pokazuje teraz tylko hero (niżej).
 
 Hero PRISM Brain Mapping (issue #5) to puste koło z `6_Puste_Koło_PRISM.pdf`
 od właścicielki, SHA-256
